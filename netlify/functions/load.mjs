@@ -6,7 +6,7 @@
  *   streak  — consecutive days ending today or yesterday
  *   history — last 7 entries before today, newest first
  */
-import { neon } from '@netlify/neon';
+import { neon } from '@neondatabase/serverless';
 import { computeStreak } from '../lib/streak.mjs';
 
 export const config = { path: '/api/load' };
@@ -25,7 +25,7 @@ export default async (req) => {
   }
 
   try {
-    const sql = neon(process.env.NETLIFY_DATABASE_URL);
+    const sql = neon(process.env.NETLIFY_DB_URL);
 
     // 1. Today's entry (null if not yet committed)
     const todayRows = await sql`

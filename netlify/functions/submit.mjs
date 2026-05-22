@@ -8,7 +8,7 @@
  * 4. Saves entry to DB
  * 5. Returns the complete entry
  */
-import { neon } from '@netlify/neon';
+import { neon } from '@neondatabase/serverless';
 
 export const config = { path: '/api/submit' };
 
@@ -68,7 +68,7 @@ export default async (req) => {
     );
   }
 
-  const sql = neon(process.env.NETLIFY_DATABASE_URL);
+  const sql = neon(process.env.NETLIFY_DB_URL);
 
   // 1. Idempotency check — return existing entry if this date is already committed
   const existing = await sql`

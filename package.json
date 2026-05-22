@@ -10,7 +10,7 @@
     "smoke":      "bash tests/system/smoke.sh"
   },
   "dependencies": {
-    "@netlify/neon": "latest"
+    "@neondatabase/serverless": "latest"
   },
   "devDependencies": {
     "vitest": "^2.0.0"
