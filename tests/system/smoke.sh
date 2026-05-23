@@ -24,8 +24,7 @@ fi
 BASE_URL="${BASE_URL%/}"
 
 # Use a date far in the past so we don't collide with real data.
-# Adjust if that date already has a row in your DB.
-TEST_DATE="2099-12-31"
+TEST_DATE="1999-12-31"
 
 PASS=0
 FAIL=0
@@ -39,10 +38,10 @@ assert_eq() {
   local label="$1" expected="$2" actual="$3"
   if [[ "$actual" == "$expected" ]]; then
     green "$label"
-    ((PASS++))
+    ((++PASS))
   else
     red "$label  (expected: $expected, got: $actual)"
-    ((FAIL++))
+    ((++FAIL))
   fi
 }
 
@@ -50,10 +49,10 @@ assert_not_empty() {
   local label="$1" value="$2"
   if [[ -n "$value" && "$value" != "null" ]]; then
     green "$label"
-    ((PASS++))
+    ((++PASS))
   else
     red "$label  (expected non-empty, got: $value)"
-    ((FAIL++))
+    ((++FAIL))
   fi
 }
 

@@ -494,9 +494,7 @@
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
     function getTodayDate() {
-      const offset = parseInt(localStorage.getItem('dateOffset') || '0');
       const d = new Date();
-      d.setDate(d.getDate() + offset);
       const y = d.getFullYear();
       const m = String(d.getMonth() + 1).padStart(2, '0');
       const day = String(d.getDate()).padStart(2, '0');
@@ -645,10 +643,6 @@
     async function loadApp() {
       const date = getTodayDate();
       renderHeader(date, null);
-
-      const offset = parseInt(localStorage.getItem('dateOffset') || '0');
-      document.getElementById('simulate-label').textContent =
-        offset > 0 ? `Simulating +${offset} day${offset !== 1 ? 's' : ''} from today` : '';
 
       try {
         const res = await fetch(`/api/load?date=${date}`);
