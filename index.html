@@ -516,6 +516,90 @@
 
     .rating-skip:hover { opacity: 1; }
 
+    /* ── MILESTONE CELEBRATION ── */
+    .milestone-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(237, 232, 223, 0.97);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      cursor: pointer;
+      overflow: hidden;
+      animation: ms-fade-in 0.5s ease forwards;
+    }
+
+    .milestone-overlay.hiding {
+      animation: ms-fade-out 0.7s ease forwards;
+      pointer-events: none;
+    }
+
+    @keyframes ms-fade-in  { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes ms-fade-out { from { opacity: 1; } to { opacity: 0; } }
+
+    .milestone-day-label {
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: var(--amber);
+      animation: ms-rise 0.7s 0.1s ease both;
+    }
+
+    .milestone-number {
+      font-family: 'Lora', Georgia, serif;
+      font-size: 108px;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1;
+      animation: ms-pop 0.65s 0.15s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+
+    .milestone-message {
+      font-family: 'Lora', Georgia, serif;
+      font-size: 20px;
+      font-style: italic;
+      color: var(--text);
+      text-align: center;
+      max-width: 290px;
+      line-height: 1.45;
+      margin-top: 18px;
+      animation: ms-rise 0.7s 0.35s ease both;
+    }
+
+    .milestone-dismiss {
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      margin-top: 52px;
+      animation: ms-rise 0.7s 0.65s ease both;
+    }
+
+    @keyframes ms-pop {
+      from { transform: scale(0.3); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+
+    @keyframes ms-rise {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0);    }
+    }
+
+    .ms-particle {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      animation: ms-particle-float linear forwards;
+    }
+
+    @keyframes ms-particle-float {
+      0%   { opacity: 0.75; transform: translateY(0)     translateX(0)            scale(1);   }
+      100% { opacity: 0;    transform: translateY(-300px) translateX(var(--drift)) scale(0.2); }
+    }
+
     /* ── LOADING ── */
     .loading {
       font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
@@ -958,6 +1042,80 @@
     }
 
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // MILESTONE CELEBRATION
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    const MILESTONE_MESSAGES = {
+      10:  "Ten mornings of choosing yourself.",
+      20:  "Twenty days. The habit is real.",
+      30:  "A full month of showing up.",
+      40:  "Forty mornings. Still here.",
+      50:  "Halfway to a hundred.",
+      60:  "Two months. You're building something.",
+      70:  "Seventy days. Keep going.",
+      80:  "Eighty mornings. Almost there.",
+      90:  "Ninety days. One last push.",
+      100: "One hundred days. This is who you are now.",
+    };
+
+    function showMilestoneCelebration(streak) {
+      // Only once per milestone — stored in localStorage (cosmetic only)
+      const key = `milestone-v1-${streak}`;
+      if (localStorage.getItem(key)) return;
+      localStorage.setItem(key, '1');
+
+      const msg = MILESTONE_MESSAGES[streak] || `${streak} days of showing up.`;
+
+      const overlay = document.createElement('div');
+      overlay.className = 'milestone-overlay';
+      overlay.innerHTML = `
+        <div class="milestone-day-label">Day</div>
+        <div class="milestone-number">${streak}</div>
+        <div class="milestone-message">${esc(msg)}</div>
+        <div class="milestone-dismiss">tap to continue</div>
+      `;
+
+      // Floating particles
+      const particleColors = [
+        'rgba(184,119,58,0.55)',
+        'rgba(184,119,58,0.35)',
+        'rgba(184,119,58,0.75)',
+        'rgba(221,213,198,0.85)',
+        'rgba(155,95,30,0.45)',
+      ];
+      for (let i = 0; i < 16; i++) {
+        const p = document.createElement('div');
+        p.className = 'ms-particle';
+        const size   = 3 + Math.random() * 8;
+        const left   = 5  + Math.random() * 90;
+        const bottom = 3  + Math.random() * 45;
+        const dur    = 2.8 + Math.random() * 2.8;
+        const delay  = Math.random() * 2.2;
+        const drift  = (Math.random() - 0.5) * 90;
+        const color  = particleColors[Math.floor(Math.random() * particleColors.length)];
+        p.style.cssText = [
+          `width:${size}px`, `height:${size}px`,
+          `left:${left}%`, `bottom:${bottom}%`,
+          `background:${color}`,
+          `--drift:${drift}px`,
+          `animation-duration:${dur}s`,
+          `animation-delay:${delay}s`,
+        ].join(';');
+        overlay.appendChild(p);
+      }
+
+      const dismiss = () => {
+        overlay.classList.add('hiding');
+        setTimeout(() => overlay.remove(), 700);
+      };
+
+      overlay.addEventListener('click', dismiss);
+      setTimeout(dismiss, 5500); // auto-dismiss after 5.5 s
+
+      document.body.appendChild(overlay);
+    }
+
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     // SUBMIT
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -999,8 +1157,14 @@
         const reload = await fetch(`/api/load?date=${date}`);
         if (reload.ok) {
           const fresh = await reload.json();
-          renderHeader(date, fresh.streak ?? 0);
+          const newStreak = fresh.streak ?? 0;
+          renderHeader(date, newStreak);
           renderHistory(fresh.history || []);
+
+          // Milestone celebration — every multiple of 10
+          if (newStreak > 0 && newStreak % 10 === 0) {
+            showMilestoneCelebration(newStreak);
+          }
         }
       } catch (err) {
         console.error('Submit error:', err);
