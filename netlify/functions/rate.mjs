@@ -26,8 +26,9 @@ export default async (req) => {
   if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
     return Response.json({ error: 'date must be in YYYY-MM-DD format.' }, { status: 400 });
   }
-  if (rating === undefined || rating === null || !Number.isInteger(rating) || rating < 0 || rating > 5) {
-    return Response.json({ error: 'rating must be an integer from 0 to 5.' }, { status: 400 });
+  const clearRating = rating === null;
+  if (!clearRating && (!Number.isInteger(rating) || rating < 0 || rating > 5)) {
+    return Response.json({ error: 'rating must be an integer from 0 to 5, or null to clear.' }, { status: 400 });
   }
 
   const sql = neon(process.env.NETLIFY_DB_URL);
