@@ -384,6 +384,138 @@
       color: var(--muted);
     }
 
+    /* ── MORNING RATING DOTS (history) ── */
+    .morning-rating {
+      display: flex;
+      gap: 4px;
+      margin-top: 6px;
+      align-items: center;
+    }
+
+    .morning-rating-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: rgba(40, 32, 26, 0.12);
+    }
+
+    .morning-rating-dot.filled {
+      background: var(--amber);
+    }
+
+    /* ── RATING SCREEN ── */
+    .rating-context {
+      background: var(--card);
+      border: 1.5px solid var(--card-border);
+      border-radius: 14px;
+      padding: 18px 20px;
+      margin-bottom: 32px;
+    }
+
+    .rating-context-date {
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 8px;
+    }
+
+    .rating-context-focus {
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .rating-context-commitment {
+      font-size: 14px;
+      color: var(--muted);
+      font-style: italic;
+      line-height: 1.4;
+    }
+
+    .rating-btn-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 14px;
+    }
+
+    .rating-tap-btn {
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      border: none;
+      background: var(--badge-bg);
+      cursor: pointer;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      transition: transform 0.1s ease;
+    }
+
+    .rating-ring-svg {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      transform: rotate(-90deg);
+      pointer-events: none;
+    }
+
+    .rating-ring-bg {
+      fill: none;
+      stroke: rgba(40, 32, 26, 0.08);
+      stroke-width: 6;
+    }
+
+    .rating-ring-fill {
+      fill: none;
+      stroke: var(--amber);
+      stroke-width: 6;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 0.25s ease, stroke 0.25s ease;
+    }
+
+    .rating-number {
+      font-family: 'Lora', Georgia, serif;
+      font-size: 40px;
+      font-weight: 500;
+      color: var(--text);
+      position: relative;
+      z-index: 1;
+      transition: color 0.2s;
+      pointer-events: none;
+    }
+
+    .rating-hint {
+      text-align: center;
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+      font-size: 13px;
+      color: var(--muted);
+      font-style: italic;
+      min-height: 20px;
+      margin-bottom: 22px;
+      transition: opacity 0.2s;
+    }
+
+    .rating-skip {
+      display: block;
+      margin: 0 auto;
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+      font-size: 12px;
+      cursor: pointer;
+      padding: 8px 12px;
+      opacity: 0.65;
+      letter-spacing: 0.04em;
+    }
+
+    .rating-skip:hover { opacity: 1; }
+
     /* ── LOADING ── */
     .loading {
       font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
@@ -497,6 +629,15 @@
 
     function getTodayDate() {
       const d = new Date();
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    }
+
+    function getYesterdayDate() {
+      const d = new Date();
+      d.setDate(d.getDate() - 1);
       const y = d.getFullYear();
       const m = String(d.getMonth() + 1).padStart(2, '0');
       const day = String(d.getDate()).padStart(2, '0');
@@ -627,13 +768,152 @@
         el.innerHTML = '<div class="empty-state">Your committed mornings will gather here.</div>';
         return;
       }
-      el.innerHTML = history.map(e => `
-        <div class="morning-entry">
-          <div class="morning-date">${formatDate(e.date)}</div>
-          <div class="morning-focus">${esc(e.focus)}</div>
-          <div class="morning-commitment">${esc(e.commitment)}</div>
+      el.innerHTML = history.map(e => {
+        const ratingDots = (e.rating !== null && e.rating !== undefined)
+          ? `<div class="morning-rating">${[1,2,3,4,5].map(i =>
+              `<div class="morning-rating-dot${i <= e.rating ? ' filled' : ''}"></div>`
+            ).join('')}</div>`
+          : '';
+        return `
+          <div class="morning-entry">
+            <div class="morning-date">${formatDate(e.date)}</div>
+            <div class="morning-focus">${esc(e.focus)}</div>
+            <div class="morning-commitment">${esc(e.commitment)}</div>
+            ${ratingDots}
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // SELF-RATING
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    // Set to true once the rating prompt has been handled this session
+    // (prevents the prompt re-appearing if loadApp is called again, e.g. after submit)
+    let ratingPromptHandled = false;
+
+    const RATING_CIRCUMFERENCE = 2 * Math.PI * 56; // radius 56 inside 130px button
+
+    const RATING_HINTS = [
+      'Tap to rate',
+      "I barely tried…",
+      'Made some effort',
+      'Good showing',
+      'Showed up well',
+      'Like a rock star! ⭐'
+    ];
+
+    const RATING_COLORS = [
+      'rgba(184,119,58,0)',
+      'rgba(184,119,58,0.30)',
+      'rgba(184,119,58,0.50)',
+      'rgba(184,119,58,0.70)',
+      'rgba(184,119,58,0.88)',
+      'rgba(184,119,58,1.00)',
+    ];
+
+    function renderRatingScreen(yesterday) {
+      document.getElementById('checkin-section').innerHTML = `
+        <div class="section-header-row">
+          <span class="section-label">How did yesterday go?</span>
+          <div class="section-line"></div>
         </div>
-      `).join('');
+
+        <div class="rating-context">
+          <div class="rating-context-date">${formatDate(yesterday.date)}</div>
+          <div class="rating-context-focus">${esc(yesterday.focus)}</div>
+          <div class="rating-context-commitment">${esc(yesterday.commitment)}</div>
+        </div>
+
+        <div class="rating-btn-wrap">
+          <button class="rating-tap-btn" id="rating-tap-btn" onclick="handleRatingTap()">
+            <svg class="rating-ring-svg" viewBox="0 0 130 130">
+              <circle class="rating-ring-bg" cx="65" cy="65" r="56"/>
+              <circle class="rating-ring-fill" id="rating-ring" cx="65" cy="65" r="56"
+                stroke-dasharray="${RATING_CIRCUMFERENCE.toFixed(2)}"
+                stroke-dashoffset="${RATING_CIRCUMFERENCE.toFixed(2)}"/>
+            </svg>
+            <span class="rating-number" id="rating-number">0</span>
+          </button>
+        </div>
+
+        <div class="rating-hint" id="rating-hint">Tap to rate</div>
+
+        <button class="rating-skip" onclick="handleRatingSkip()">skip →</button>
+      `;
+
+      // State lives on a plain object (not window) to avoid leaks
+      window.__ratingState = { date: yesterday.date, current: 0, timer: null };
+    }
+
+    function handleRatingTap() {
+      const state = window.__ratingState;
+      if (!state) return;
+
+      // Cycle 0 → 1 → 2 → 3 → 4 → 5 → 0
+      state.current = (state.current + 1) % 6;
+
+      const { current } = state;
+
+      // Update ring
+      const offset = RATING_CIRCUMFERENCE * (1 - current / 5);
+      const ring = document.getElementById('rating-ring');
+      ring.style.strokeDashoffset = offset;
+      ring.style.stroke = RATING_COLORS[current];
+
+      // Update number
+      document.getElementById('rating-number').textContent = current;
+
+      // Update hint
+      document.getElementById('rating-hint').textContent = RATING_HINTS[current];
+
+      // Bounce
+      const btn = document.getElementById('rating-tap-btn');
+      btn.style.transform = 'scale(0.87)';
+      setTimeout(() => { btn.style.transform = 'scale(1)'; }, 110);
+
+      // Auto-save 2 s after last tap (only if rating > 0)
+      clearTimeout(state.timer);
+      if (current > 0) {
+        state.timer = setTimeout(() => commitRating(state.date, current), 2000);
+      }
+    }
+
+    async function commitRating(date, rating) {
+      try {
+        await fetch('/api/rate', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ date, rating }),
+        });
+      } catch (err) {
+        console.error('Rating save error (non-fatal):', err);
+      }
+      proceedAfterRating();
+    }
+
+    function handleRatingSkip() {
+      const state = window.__ratingState;
+      if (state?.timer) clearTimeout(state.timer);
+      proceedAfterRating();
+    }
+
+    async function proceedAfterRating() {
+      ratingPromptHandled = true;
+      window.__ratingState = null;
+      // Re-load to get today's fresh state
+      const date = getTodayDate();
+      try {
+        const res = await fetch(`/api/load?date=${date}`);
+        const data = res.ok ? await res.json() : {};
+        renderHeader(date, data.streak ?? 0);
+        renderHistory(data.history || []);
+        if (data.today) renderCommittedDay(data.today);
+        else renderFreshDay();
+      } catch {
+        renderFreshDay();
+      }
     }
 
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -653,6 +933,16 @@
 
         renderHeader(date, data.streak ?? 0);
         renderHistory(data.history || []);
+
+        // Show rating prompt if yesterday has an unrated entry (once per session)
+        if (!ratingPromptHandled) {
+          const yesterday = getYesterdayDate();
+          const yesterdayEntry = (data.history || []).find(e => e.date === yesterday);
+          if (yesterdayEntry && yesterdayEntry.rating == null) {
+            renderRatingScreen(yesterdayEntry);
+            return;
+          }
+        }
 
         if (data.today) {
           renderCommittedDay(data.today);
@@ -719,16 +1009,6 @@
         errorEl.textContent = 'Something went wrong — please try again.';
         errorEl.style.display = 'block';
       }
-    }
-
-    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    // SIMULATE (testing only)
-    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-    function simulateNextDay() {
-      const current = parseInt(localStorage.getItem('dateOffset') || '0');
-      localStorage.setItem('dateOffset', String(current + 1));
-      loadApp();
     }
 
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
