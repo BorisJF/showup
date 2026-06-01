@@ -669,9 +669,6 @@
     <div class="loading">Loading...</div>
   </div>
 
-  <!-- DIVIDER -->
-  <div class="divider"></div>
-
   <!-- RECENT MORNINGS -->
   <div class="section-header-row">
     <span class="section-label">Recent mornings</span>
@@ -960,7 +957,7 @@
       // Auto-save 2 s after last tap (only if rating > 0)
       clearTimeout(state.timer);
       if (current > 0) {
-        state.timer = setTimeout(() => commitRating(state.date, current), 10000);
+        state.timer = setTimeout(() => commitRating(state.date, current), 2000);
       }
     }
 
