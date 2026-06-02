@@ -600,6 +600,71 @@
       100% { opacity: 0;    transform: translateY(-300px) translateX(var(--drift)) scale(0.2); }
     }
 
+    /* ── SUBMIT CELEBRATION ── */
+    .submit-celebration {
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 500; overflow: hidden;
+    }
+    .submit-celebration.fading { animation: sc-out 0.5s ease forwards; }
+    @keyframes sc-out { from { opacity: 1; } to { opacity: 0; } }
+    .sc-particle {
+      position: absolute; pointer-events: none;
+      animation: sc-rise cubic-bezier(0.15, 0.8, 0.35, 1) forwards;
+    }
+    @keyframes sc-rise {
+      0%   { opacity: 0.9; transform: translateY(0) translateX(0) rotate(0deg) scale(1); }
+      12%  { opacity: 1; }
+      100% { opacity: 0; transform: translateY(var(--rise)) translateX(var(--drift)) rotate(var(--rot)) scale(0.15); }
+    }
+
+    /* ── RATING 5-STAR CONFETTI ── */
+    .rc-particle {
+      position: fixed; border-radius: 50%;
+      pointer-events: none; z-index: 600;
+      animation: rc-burst ease-out forwards;
+    }
+    @keyframes rc-burst {
+      0%   { opacity: 1;  transform: translate(0, 0) scale(1); }
+      100% { opacity: 0;  transform: translate(var(--tx), var(--ty)) scale(0.1); }
+    }
+
+    /* ── RESET BUTTON ── */
+    .reset-btn {
+      display: block; margin: 36px auto 0;
+      background: none; border: none;
+      color: rgba(154, 139, 123, 0.36);
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+      font-size: 11px; letter-spacing: 0.08em;
+      cursor: pointer; padding: 8px 16px;
+      transition: color 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .reset-btn:hover   { color: rgba(154, 139, 123, 0.65); }
+    .reset-btn.confirming { color: var(--amber); }
+
+    /* ── COMMITMENT QUALITY HINT ── */
+    .quality-hint {
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+      font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+      min-height: 16px; margin-top: 7px;
+      opacity: 0; transition: opacity 0.4s;
+    }
+    .quality-hint.visible   { opacity: 1; }
+    .quality-vague          { color: var(--muted); }
+    .quality-specific       { color: var(--amber); }
+    .quality-exceptional    { color: var(--amber); font-weight: 700; letter-spacing: 0.22em; }
+
+    /* ── OFFLINE BANNER ── */
+    .offline-saved { text-align: center; padding: 28px 0 8px; }
+    .offline-saved-label {
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+      font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--amber); margin-bottom: 12px;
+    }
+    .offline-saved-msg {
+      font-size: 16px; font-style: italic; color: var(--muted); line-height: 1.55;
+    }
+
     /* ── LOADING ── */
     .loading {
       font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
@@ -795,8 +860,10 @@
           <textarea
             id="commitment-input"
             placeholder="Write it down — even one line."
+            oninput="handleCommitmentInput()"
             rows="3"
           ></textarea>
+          <div class="quality-hint" id="quality-hint"></div>
         </div>
 
         <button class="commit-btn" id="commit-btn" onclick="handleCommit()">
@@ -840,6 +907,13 @@
             <div class="message-text">${esc(entry.daily_message)}</div>
           </div>
         ` : ''}
+
+        <button class="reset-btn" id="reset-btn"
+          data-date="${esc(entry.date)}"
+          data-yesterday="${getYesterdayDate()}"
+          onclick="handleReset(this.dataset.date, this.dataset.yesterday)">
+          Reset today
+        </button>
       `;
     }
 
@@ -954,7 +1028,13 @@
       btn.style.transform = 'scale(0.87)';
       setTimeout(() => { btn.style.transform = 'scale(1)'; }, 110);
 
-      // Auto-save 2 s after last tap (only if rating > 0)
+      // Haptic on every tap
+      if (navigator.vibrate) navigator.vibrate(22);
+
+      // Confetti burst on perfect 5
+      if (current === 5) triggerRatingConfetti();
+
+      // Auto-save after inactivity (only if rating > 0)
       clearTimeout(state.timer);
       if (current > 0) {
         state.timer = setTimeout(() => commitRating(state.date, current), 5000);
@@ -1006,6 +1086,20 @@
     async function loadApp() {
       const date = getTodayDate();
       renderHeader(date, null);
+
+      // ── Sync pending offline draft ───────────────────────────────────────
+      const pendingDraft = localStorage.getItem('showup-draft');
+      if (pendingDraft && navigator.onLine) {
+        try {
+          const { date: dd, focus: df, commitment: dc } = JSON.parse(pendingDraft);
+          localStorage.removeItem('showup-draft');
+          await fetch('/api/submit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ date: dd, focus: df, commitment: dc }),
+          });
+        } catch {}
+      }
 
       try {
         const res = await fetch(`/api/load?date=${date}`);
@@ -1134,6 +1228,17 @@
         return;
       }
 
+      // ── Offline draft ──────────────────────────────────────────────────────
+      if (!navigator.onLine) {
+        localStorage.setItem('showup-draft', JSON.stringify({ date, focus, commitment }));
+        document.getElementById('checkin-section').innerHTML = `
+          <div class="offline-saved">
+            <div class="offline-saved-label">Saved offline</div>
+            <div class="offline-saved-msg">Your commitment is saved.<br>It'll submit when you reconnect.</div>
+          </div>`;
+        return;
+      }
+
       btn.disabled = true;
       btn.textContent = 'Committing...';
       errorEl.style.display = 'none';
@@ -1146,23 +1251,22 @@
         });
 
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
         const entry = await res.json();
-        renderCommittedDay(entry);
 
-        // Refresh streak + history without full page reload
-        const reload = await fetch(`/api/load?date=${date}`);
-        if (reload.ok) {
-          const fresh = await reload.json();
-          const newStreak = fresh.streak ?? 0;
-          renderHeader(date, newStreak);
-          renderHistory(fresh.history || []);
+        // ── Submit celebration → then show committed view ──────────────────
+        triggerSubmitCelebration(() => {
+          renderCommittedDay(entry);
+          fetch(`/api/load?date=${date}`)
+            .then(r => r.ok ? r.json() : {})
+            .then(fresh => {
+              const newStreak = fresh.streak ?? 0;
+              renderHeader(date, newStreak);
+              renderHistory(fresh.history || []);
+              if (newStreak > 0 && newStreak % 10 === 0) showMilestoneCelebration(newStreak);
+            })
+            .catch(() => {});
+        });
 
-          // Milestone celebration — every multiple of 10
-          if (newStreak > 0 && newStreak % 10 === 0) {
-            showMilestoneCelebration(newStreak);
-          }
-        }
       } catch (err) {
         console.error('Submit error:', err);
         btn.disabled = false;
@@ -1170,6 +1274,163 @@
         errorEl.textContent = 'Something went wrong — please try again.';
         errorEl.style.display = 'block';
       }
+    }
+
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // SUBMIT CELEBRATION
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    function triggerSubmitCelebration(onComplete) {
+      if (navigator.vibrate) navigator.vibrate([28, 14, 28]);
+
+      const overlay = document.createElement('div');
+      overlay.className = 'submit-celebration';
+
+      const colors = [
+        'rgba(184,119,58,0.80)', 'rgba(184,119,58,0.55)',
+        'rgba(200,145,75,0.88)', 'rgba(221,213,198,0.92)',
+        'rgba(155,95,30,0.68)',  'rgba(237,205,145,0.78)',
+        'rgba(184,119,58,0.42)', 'rgba(210,160,90,0.72)',
+      ];
+
+      for (let i = 0; i < 36; i++) {
+        const p    = document.createElement('div');
+        p.className = 'sc-particle';
+        const size  = 4 + Math.random() * 12;
+        const isRect = Math.random() > 0.52;
+        const left  = 6 + Math.random() * 88;
+        const topPct = 52 + Math.random() * 42;
+        const rise  = -(38 + Math.random() * 55) + 'vh';
+        const drift = (Math.random() - 0.5) * 120 + 'px';
+        const rot   = (Math.random() - 0.5) * 600 + 'deg';
+        const dur   = 1.05 + Math.random() * 0.95;
+        const delay = Math.random() * 0.38;
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        p.style.cssText = [
+          `width:${size}px`, `height:${size}px`,
+          `border-radius:${isRect ? Math.round(size * 0.22) + 'px' : '50%'}`,
+          `background:${color}`,
+          `left:${left}%`, `top:${topPct}%`,
+          `--rise:${rise}`, `--drift:${drift}`, `--rot:${rot}`,
+          `animation-duration:${dur}s`, `animation-delay:${delay}s`,
+        ].join(';');
+        overlay.appendChild(p);
+      }
+
+      document.body.appendChild(overlay);
+      setTimeout(() => {
+        overlay.classList.add('fading');
+        setTimeout(() => { overlay.remove(); onComplete(); }, 500);
+      }, 1380);
+    }
+
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // RATING 5-STAR CONFETTI
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    function triggerRatingConfetti() {
+      const btn = document.getElementById('rating-tap-btn');
+      if (!btn) return;
+      const rect = btn.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top  + rect.height / 2;
+      const colors = [
+        'rgba(184,119,58,0.88)', 'rgba(184,119,58,0.58)',
+        'rgba(221,213,198,0.92)', 'rgba(155,95,30,0.72)',
+      ];
+      for (let i = 0; i < 22; i++) {
+        const p = document.createElement('div');
+        p.className = 'rc-particle';
+        const size  = 4 + Math.random() * 8;
+        const angle = Math.random() * Math.PI * 2;
+        const dist  = 40 + Math.random() * 80;
+        const tx    = (Math.cos(angle) * dist) + 'px';
+        const ty    = (Math.sin(angle) * dist - 35) + 'px';
+        const dur   = 0.5 + Math.random() * 0.38;
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        p.style.cssText = [
+          `width:${size}px`, `height:${size}px`,
+          `left:${cx - size / 2}px`, `top:${cy - size / 2}px`,
+          `background:${color}`,
+          `--tx:${tx}`, `--ty:${ty}`,
+          `animation-duration:${dur}s`,
+        ].join(';');
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), dur * 1000 + 60);
+      }
+    }
+
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // RESET
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    let _resetConfirming = false;
+    let _resetTimer      = null;
+
+    async function handleReset(date, yesterday) {
+      const btn = document.getElementById('reset-btn');
+      if (!btn) return;
+
+      if (!_resetConfirming) {
+        _resetConfirming = true;
+        btn.textContent = 'Tap again to confirm';
+        btn.classList.add('confirming');
+        _resetTimer = setTimeout(() => {
+          _resetConfirming = false;
+          const b = document.getElementById('reset-btn');
+          if (b) { b.textContent = 'Reset today'; b.classList.remove('confirming'); }
+        }, 3000);
+        return;
+      }
+
+      clearTimeout(_resetTimer);
+      _resetConfirming = false;
+
+      try {
+        await fetch('/api/reset', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ date, yesterday }),
+        });
+      } catch (err) {
+        console.error('Reset error (non-fatal):', err);
+      }
+
+      ratingPromptHandled = false;
+      loadApp();
+    }
+
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // COMMITMENT QUALITY HINT
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    let _hintTimer = null;
+
+    function handleCommitmentInput() {
+      const text   = (document.getElementById('commitment-input')?.value || '').trim();
+      const hintEl = document.getElementById('quality-hint');
+      if (!hintEl) return;
+
+      hintEl.classList.remove('visible', 'quality-vague', 'quality-specific', 'quality-exceptional');
+      clearTimeout(_hintTimer);
+      if (text.length < 18) return;
+
+      _hintTimer = setTimeout(async () => {
+        try {
+          const res = await fetch('/api/hint', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ commitment: text }),
+          });
+          if (!res.ok) return;
+          const { quality } = await res.json();
+          const el = document.getElementById('quality-hint');
+          if (el && quality) {
+            el.textContent = quality;
+            el.className = `quality-hint quality-${quality} visible`;
+          }
+        } catch {}
+      }, 2000);
     }
 
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -1188,6 +1449,11 @@
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     // INIT
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // Sync offline draft as soon as connectivity returns
+    window.addEventListener('online', () => {
+      if (localStorage.getItem('showup-draft')) loadApp();
+    });
+
     document.addEventListener('DOMContentLoaded', loadApp);
   </script>
 </body>
