@@ -957,7 +957,7 @@
       // Auto-save 2 s after last tap (only if rating > 0)
       clearTimeout(state.timer);
       if (current > 0) {
-        state.timer = setTimeout(() => commitRating(state.date, current), 2000);
+        state.timer = setTimeout(() => commitRating(state.date, current), 5000);
       }
     }
 
