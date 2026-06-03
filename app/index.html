@@ -600,21 +600,65 @@
       100% { opacity: 0;    transform: translateY(-300px) translateX(var(--drift)) scale(0.2); }
     }
 
-    /* ── SUBMIT CELEBRATION ── */
-    .submit-celebration {
+    /* ── THE WARMTH (submit celebration) ── */
+    .warmth-overlay {
       position: fixed; inset: 0;
-      pointer-events: none; z-index: 500; overflow: hidden;
+      pointer-events: none; z-index: 500;
+      background: radial-gradient(
+        circle at 50% 42%,
+        rgba(184, 119, 58, 0.22) 0%,
+        rgba(237, 232, 223, 0.82) 55%,
+        rgba(237, 232, 223, 0.94) 100%
+      );
+      animation: warmth-pulse 1.75s ease forwards;
     }
-    .submit-celebration.fading { animation: sc-out 0.5s ease forwards; }
-    @keyframes sc-out { from { opacity: 1; } to { opacity: 0; } }
-    .sc-particle {
-      position: absolute; pointer-events: none;
-      animation: sc-rise cubic-bezier(0.15, 0.8, 0.35, 1) forwards;
+    @keyframes warmth-pulse {
+      0%   { opacity: 0; }
+      28%  { opacity: 1; }
+      65%  { opacity: 1; }
+      100% { opacity: 0; }
     }
-    @keyframes sc-rise {
-      0%   { opacity: 0.9; transform: translateY(0) translateX(0) rotate(0deg) scale(1); }
-      12%  { opacity: 1; }
-      100% { opacity: 0; transform: translateY(var(--rise)) translateX(var(--drift)) rotate(var(--rot)) scale(0.15); }
+
+    /* ── SPLASH SCREEN ── */
+    #splash {
+      position: fixed; inset: 0;
+      background: var(--bg);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      z-index: 3000;
+      transition: opacity 0.65s ease;
+    }
+    #splash.hidden { opacity: 0; pointer-events: none; }
+
+    #splash-logo {
+      width: 96px; height: 96px;
+      opacity: 0;
+      animation: splash-rise 0.95s cubic-bezier(0.34, 1.18, 0.64, 1) 0.1s forwards;
+    }
+    @keyframes splash-rise {
+      0%   { opacity: 0; transform: scale(0.72) translateY(18px); }
+      55%  { opacity: 1; }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    #splash-name {
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+      font-size: 11px; letter-spacing: 0.36em; text-transform: uppercase;
+      color: var(--muted); margin-top: 20px;
+      opacity: 0;
+      animation: splash-name-in 0.6s ease 0.55s forwards;
+    }
+    @keyframes splash-name-in {
+      from { opacity: 0; transform: translateY(5px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    #splash-rule {
+      width: 28px; height: 1.5px;
+      background: var(--rule-color);
+      border-radius: 1px; margin-top: 14px;
+      opacity: 0;
+      animation: splash-name-in 0.5s ease 0.8s forwards;
     }
 
     /* ── RATING 5-STAR CONFETTI ── */
@@ -705,6 +749,13 @@
   </style>
 </head>
 <body>
+
+  <!-- SPLASH SCREEN -->
+  <div id="splash">
+    <img id="splash-logo" src="/apple-touch-icon.png" alt="Show Up">
+    <div id="splash-name">Show Up</div>
+    <div id="splash-rule"></div>
+  </div>
 
   <!-- HEADER: date + streak pill -->
   <div id="app-header">
@@ -951,7 +1002,7 @@
     const RATING_CIRCUMFERENCE = 2 * Math.PI * 56; // radius 56 inside 130px button
 
     const RATING_HINTS = [
-      'Tap to rate',
+      'Hold to rate',
       "I barely tried…",
       'Made some effort',
       'Good showing',
@@ -982,7 +1033,12 @@
         </div>
 
         <div class="rating-btn-wrap">
-          <button class="rating-tap-btn" id="rating-tap-btn" onclick="handleRatingTap()">
+          <button class="rating-tap-btn" id="rating-tap-btn"
+            onmousedown="handleRatingHoldStart(event)"
+            ontouchstart="handleRatingHoldStart(event)"
+            onmouseup="handleRatingHoldEnd(event)"
+            ontouchend="handleRatingHoldEnd(event)"
+            onmouseleave="handleRatingHoldEnd(event)">
             <svg class="rating-ring-svg" viewBox="0 0 130 130">
               <circle class="rating-ring-bg" cx="65" cy="65" r="56"/>
               <circle class="rating-ring-fill" id="rating-ring" cx="65" cy="65" r="56"
@@ -1002,43 +1058,61 @@
       window.__ratingState = { date: yesterday.date, current: 0, timer: null };
     }
 
-    function handleRatingTap() {
+    // ── Press-and-hold rating ─────────────────────────────────────────────
+    const HOLD_DURATION = 2000; // ms to go from 0 → 5
+    let _holdStart = null;
+    let _holdRaf   = null;
+
+    function handleRatingHoldStart(e) {
+      e.preventDefault();
+      if (_holdStart !== null) return; // already holding
+      _holdStart = Date.now();
+
+      const tick = () => {
+        if (_holdStart === null) return;
+        const elapsed  = Date.now() - _holdStart;
+        const progress = Math.min(elapsed / HOLD_DURATION, 1);
+        const rating   = Math.min(5, Math.ceil(progress * 5));
+
+        // Smooth ring fill
+        const ring = document.getElementById('rating-ring');
+        if (ring) {
+          ring.style.strokeDashoffset = RATING_CIRCUMFERENCE * (1 - progress);
+          ring.style.stroke = RATING_COLORS[rating] || RATING_COLORS[5];
+        }
+        const numEl  = document.getElementById('rating-number');
+        const hintEl = document.getElementById('rating-hint');
+        if (numEl)  numEl.textContent  = rating;
+        if (hintEl) hintEl.textContent = RATING_HINTS[rating] || '';
+
+        if (progress < 1) {
+          _holdRaf = requestAnimationFrame(tick);
+        } else {
+          // Reached 5 — auto-complete
+          _holdStart = null;
+          triggerRatingConfetti();
+          const state = window.__ratingState;
+          if (state) commitRating(state.date, 5);
+        }
+      };
+      _holdRaf = requestAnimationFrame(tick);
+    }
+
+    function handleRatingHoldEnd(e) {
+      if (_holdStart === null) return;
+      const elapsed = Date.now() - _holdStart;
+      cancelAnimationFrame(_holdRaf);
+      _holdRaf   = null;
+      _holdStart = null;
+
+      const progress = Math.min(elapsed / HOLD_DURATION, 1);
+      const rating   = Math.min(5, Math.ceil(progress * 5));
+
+      if (elapsed < 120 || rating === 0) return; // accidental touch
+
+      if (rating === 5) triggerRatingConfetti();
       const state = window.__ratingState;
-      if (!state) return;
-
-      // Cycle 0 → 1 → 2 → 3 → 4 → 5 → 0
-      state.current = (state.current + 1) % 6;
-
-      const { current } = state;
-
-      // Update ring
-      const offset = RATING_CIRCUMFERENCE * (1 - current / 5);
-      const ring = document.getElementById('rating-ring');
-      ring.style.strokeDashoffset = offset;
-      ring.style.stroke = RATING_COLORS[current];
-
-      // Update number
-      document.getElementById('rating-number').textContent = current;
-
-      // Update hint
-      document.getElementById('rating-hint').textContent = RATING_HINTS[current];
-
-      // Bounce
-      const btn = document.getElementById('rating-tap-btn');
-      btn.style.transform = 'scale(0.87)';
-      setTimeout(() => { btn.style.transform = 'scale(1)'; }, 110);
-
-      // Haptic on every tap
-      if (navigator.vibrate) navigator.vibrate(22);
-
-      // Confetti burst on perfect 5
-      if (current === 5) triggerRatingConfetti();
-
-      // Auto-save after inactivity (only if rating > 0)
-      clearTimeout(state.timer);
-      if (current > 0) {
-        state.timer = setTimeout(() => commitRating(state.date, current), 5000);
-      }
+      if (state) commitRating(state.date, rating);
     }
 
     async function commitRating(date, rating) {
@@ -1083,9 +1157,15 @@
 
     let selectedFocus = null;
 
+    function hideSplash() {
+      const splash = document.getElementById('splash');
+      if (!splash) return;
+      splash.classList.add('hidden');
+      setTimeout(() => splash.remove(), 700);
+    }
+
     async function loadApp() {
       const date = getTodayDate();
-      renderHeader(date, null);
 
       // ── Sync pending offline draft ───────────────────────────────────────
       const pendingDraft = localStorage.getItem('showup-draft');
@@ -1102,10 +1182,16 @@
       }
 
       try {
-        const res = await fetch(`/api/load?date=${date}`);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
+        // Wait for both data AND minimum splash display time
+        const [data] = await Promise.all([
+          fetch(`/api/load?date=${date}`).then(r => {
+            if (!r.ok) throw new Error(`HTTP ${r.status}`);
+            return r.json();
+          }),
+          new Promise(resolve => setTimeout(resolve, 900)),
+        ]);
 
+        hideSplash();
         renderHeader(date, data.streak ?? 0);
         renderHistory(data.history || []);
 
@@ -1126,6 +1212,7 @@
         }
       } catch (err) {
         console.error('Load error:', err);
+        hideSplash();
         document.getElementById('checkin-section').innerHTML =
           '<div class="error-msg">Could not connect — please refresh.</div>';
         document.getElementById('history-section').innerHTML = '';
@@ -1277,51 +1364,15 @@
     }
 
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    // SUBMIT CELEBRATION
+    // THE WARMTH (submit celebration)
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
     function triggerSubmitCelebration(onComplete) {
       if (navigator.vibrate) navigator.vibrate([28, 14, 28]);
-
       const overlay = document.createElement('div');
-      overlay.className = 'submit-celebration';
-
-      const colors = [
-        'rgba(184,119,58,0.80)', 'rgba(184,119,58,0.55)',
-        'rgba(200,145,75,0.88)', 'rgba(221,213,198,0.92)',
-        'rgba(155,95,30,0.68)',  'rgba(237,205,145,0.78)',
-        'rgba(184,119,58,0.42)', 'rgba(210,160,90,0.72)',
-      ];
-
-      for (let i = 0; i < 36; i++) {
-        const p    = document.createElement('div');
-        p.className = 'sc-particle';
-        const size  = 4 + Math.random() * 12;
-        const isRect = Math.random() > 0.52;
-        const left  = 6 + Math.random() * 88;
-        const topPct = 52 + Math.random() * 42;
-        const rise  = -(38 + Math.random() * 55) + 'vh';
-        const drift = (Math.random() - 0.5) * 120 + 'px';
-        const rot   = (Math.random() - 0.5) * 600 + 'deg';
-        const dur   = 1.05 + Math.random() * 0.95;
-        const delay = Math.random() * 0.38;
-        const color = colors[Math.floor(Math.random() * colors.length)];
-        p.style.cssText = [
-          `width:${size}px`, `height:${size}px`,
-          `border-radius:${isRect ? Math.round(size * 0.22) + 'px' : '50%'}`,
-          `background:${color}`,
-          `left:${left}%`, `top:${topPct}%`,
-          `--rise:${rise}`, `--drift:${drift}`, `--rot:${rot}`,
-          `animation-duration:${dur}s`, `animation-delay:${delay}s`,
-        ].join(';');
-        overlay.appendChild(p);
-      }
-
+      overlay.className = 'warmth-overlay';
       document.body.appendChild(overlay);
-      setTimeout(() => {
-        overlay.classList.add('fading');
-        setTimeout(() => { overlay.remove(); onComplete(); }, 500);
-      }, 1380);
+      setTimeout(() => { overlay.remove(); onComplete(); }, 1750);
     }
 
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -1455,6 +1506,11 @@
     });
 
     document.addEventListener('DOMContentLoaded', loadApp);
+
+    // Register service worker for shell caching
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js').catch(() => {});
+    }
   </script>
 </body>
 </html>
