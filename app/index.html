@@ -441,8 +441,8 @@
     }
 
     .rating-tap-btn {
-      width: 130px;
-      height: 130px;
+      width: 220px;
+      height: 220px;
       border-radius: 50%;
       border: none;
       background: var(--badge-bg);
@@ -480,7 +480,7 @@
 
     .rating-number {
       font-family: 'Lora', Georgia, serif;
-      font-size: 40px;
+      font-size: 68px;
       font-weight: 500;
       color: var(--text);
       position: relative;
@@ -600,23 +600,25 @@
       100% { opacity: 0;    transform: translateY(-300px) translateX(var(--drift)) scale(0.2); }
     }
 
-    /* ── THE WARMTH (submit celebration) ── */
-    .warmth-overlay {
+    /* ── THE BLOOM (submit celebration) ── */
+    .bloom-overlay {
       position: fixed; inset: 0;
+      background: var(--amber);
       pointer-events: none; z-index: 500;
-      background: radial-gradient(
-        circle at 50% 42%,
-        rgba(184, 119, 58, 0.22) 0%,
-        rgba(237, 232, 223, 0.82) 55%,
-        rgba(237, 232, 223, 0.94) 100%
-      );
-      animation: warmth-pulse 1.75s ease forwards;
+      clip-path: circle(0% at 50% 50%);
+      animation: bloom-expand 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
     }
-    @keyframes warmth-pulse {
-      0%   { opacity: 0; }
-      28%  { opacity: 1; }
-      65%  { opacity: 1; }
-      100% { opacity: 0; }
+    .bloom-overlay.receding {
+      clip-path: circle(150% at 50% 50%);
+      animation: bloom-recede 0.45s ease forwards;
+    }
+    @keyframes bloom-expand {
+      from { clip-path: circle(0% at 50% 50%); }
+      to   { clip-path: circle(150% at 50% 50%); }
+    }
+    @keyframes bloom-recede {
+      from { opacity: 1; }
+      to   { opacity: 0; }
     }
 
     /* ── SPLASH SCREEN ── */
@@ -626,39 +628,48 @@
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
       z-index: 3000;
-      transition: opacity 0.65s ease;
+      transition: opacity 0.75s cubic-bezier(0.4, 0, 0.2, 1);
     }
     #splash.hidden { opacity: 0; pointer-events: none; }
 
     #splash-logo {
-      width: 96px; height: 96px;
+      width: min(68vw, 280px);
+      height: min(68vw, 280px);
       opacity: 0;
-      animation: splash-rise 0.95s cubic-bezier(0.34, 1.18, 0.64, 1) 0.1s forwards;
+      animation: splash-rise 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
     }
     @keyframes splash-rise {
-      0%   { opacity: 0; transform: scale(0.72) translateY(18px); }
-      55%  { opacity: 1; }
-      100% { opacity: 1; transform: scale(1) translateY(0); }
+      0%   { opacity: 0; transform: translateY(28px) scale(0.84); }
+      50%  { opacity: 1; }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
     }
 
     #splash-name {
-      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
-      font-size: 11px; letter-spacing: 0.36em; text-transform: uppercase;
-      color: var(--muted); margin-top: 20px;
+      font-family: 'Lora', Georgia, serif;
+      font-size: clamp(20px, 5.5vw, 26px);
+      font-weight: 400;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--text);
+      margin-top: 36px;
       opacity: 0;
-      animation: splash-name-in 0.6s ease 0.55s forwards;
-    }
-    @keyframes splash-name-in {
-      from { opacity: 0; transform: translateY(5px); }
-      to   { opacity: 1; transform: translateY(0); }
+      animation: splash-text-in 0.8s ease 0.7s forwards;
     }
 
-    #splash-rule {
-      width: 28px; height: 1.5px;
-      background: var(--rule-color);
-      border-radius: 1px; margin-top: 14px;
+    #splash-sub {
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 10px;
       opacity: 0;
-      animation: splash-name-in 0.5s ease 0.8s forwards;
+      animation: splash-text-in 0.7s ease 1.0s forwards;
+    }
+
+    @keyframes splash-text-in {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
     /* ── RATING 5-STAR CONFETTI ── */
@@ -754,7 +765,7 @@
   <div id="splash">
     <img id="splash-logo" src="/apple-touch-icon.png" alt="Show Up">
     <div id="splash-name">Show Up</div>
-    <div id="splash-rule"></div>
+    <div id="splash-sub">Your morning ritual</div>
   </div>
 
   <!-- HEADER: date + streak pill -->
@@ -999,7 +1010,7 @@
     // (prevents the prompt re-appearing if loadApp is called again, e.g. after submit)
     let ratingPromptHandled = false;
 
-    const RATING_CIRCUMFERENCE = 2 * Math.PI * 56; // radius 56 inside 130px button
+    const RATING_CIRCUMFERENCE = 2 * Math.PI * 100; // radius 100 inside 220px button
 
     const RATING_HINTS = [
       'Hold to rate',
@@ -1039,9 +1050,9 @@
             onmouseup="handleRatingHoldEnd(event)"
             ontouchend="handleRatingHoldEnd(event)"
             onmouseleave="handleRatingHoldEnd(event)">
-            <svg class="rating-ring-svg" viewBox="0 0 130 130">
-              <circle class="rating-ring-bg" cx="65" cy="65" r="56"/>
-              <circle class="rating-ring-fill" id="rating-ring" cx="65" cy="65" r="56"
+            <svg class="rating-ring-svg" viewBox="0 0 220 220">
+              <circle class="rating-ring-bg" cx="110" cy="110" r="100"/>
+              <circle class="rating-ring-fill" id="rating-ring" cx="110" cy="110" r="100"
                 stroke-dasharray="${RATING_CIRCUMFERENCE.toFixed(2)}"
                 stroke-dashoffset="${RATING_CIRCUMFERENCE.toFixed(2)}"/>
             </svg>
@@ -1364,15 +1375,21 @@
     }
 
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    // THE WARMTH (submit celebration)
+    // THE BLOOM (submit celebration)
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
     function triggerSubmitCelebration(onComplete) {
       if (navigator.vibrate) navigator.vibrate([28, 14, 28]);
       const overlay = document.createElement('div');
-      overlay.className = 'warmth-overlay';
+      overlay.className = 'bloom-overlay';
       document.body.appendChild(overlay);
-      setTimeout(() => { overlay.remove(); onComplete(); }, 1750);
+
+      // Once bloom fills screen, render content beneath then fade out
+      setTimeout(() => {
+        onComplete();
+        overlay.classList.add('receding');
+        setTimeout(() => overlay.remove(), 460);
+      }, 560);
     }
 
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
