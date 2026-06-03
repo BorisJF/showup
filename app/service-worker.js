@@ -9,7 +9,7 @@
  * to force clients to fetch the new shell.
  */
 
-const CACHE_NAME = 'showup-shell-v1';
+const CACHE_NAME = 'showup-shell-v3';
 
 const SHELL = [
   '/',

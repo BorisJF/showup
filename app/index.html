@@ -603,22 +603,27 @@
     /* ── THE BLOOM (submit celebration) ── */
     .bloom-overlay {
       position: fixed; inset: 0;
-      background: var(--amber);
       pointer-events: none; z-index: 500;
+      background: radial-gradient(
+        circle at 50% 50%,
+        rgba(184, 119, 58, 0.90) 0%,
+        rgba(196, 138, 65, 0.75) 42%,
+        rgba(218, 172, 100, 0.48) 100%
+      );
       clip-path: circle(0% at 50% 50%);
-      animation: bloom-expand 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      animation: bloom-open 0.75s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
     }
-    .bloom-overlay.receding {
+    .bloom-overlay.closing {
       clip-path: circle(150% at 50% 50%);
-      animation: bloom-recede 0.45s ease forwards;
+      animation: bloom-close 0.55s cubic-bezier(0.4, 0, 0.8, 0.2) forwards;
     }
-    @keyframes bloom-expand {
+    @keyframes bloom-open {
       from { clip-path: circle(0% at 50% 50%); }
       to   { clip-path: circle(150% at 50% 50%); }
     }
-    @keyframes bloom-recede {
-      from { opacity: 1; }
-      to   { opacity: 0; }
+    @keyframes bloom-close {
+      from { clip-path: circle(150% at 50% 50%); }
+      to   { clip-path: circle(0% at 50% 50%); }
     }
 
     /* ── SPLASH SCREEN ── */
@@ -1070,7 +1075,7 @@
     }
 
     // ── Press-and-hold rating ─────────────────────────────────────────────
-    const HOLD_DURATION = 2000; // ms to go from 0 → 5
+    const HOLD_DURATION = 3000; // ms to go from 0 → 5
     let _holdStart = null;
     let _holdRaf   = null;
 
@@ -1384,12 +1389,12 @@
       overlay.className = 'bloom-overlay';
       document.body.appendChild(overlay);
 
-      // Once bloom fills screen, render content beneath then fade out
+      // Bloom opens → render content beneath → iris closes back to centre
       setTimeout(() => {
         onComplete();
-        overlay.classList.add('receding');
-        setTimeout(() => overlay.remove(), 460);
-      }, 560);
+        overlay.classList.add('closing');
+        setTimeout(() => overlay.remove(), 580);
+      }, 750);
     }
 
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
