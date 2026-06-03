@@ -1083,6 +1083,7 @@
       e.preventDefault();
       if (_holdStart !== null) return; // already holding
       _holdStart = Date.now();
+      _lastTick = 0; // reset tick tracker
 
       const tick = () => {
         if (_holdStart === null) return;
@@ -1100,6 +1101,9 @@
         const hintEl = document.getElementById('rating-hint');
         if (numEl)  numEl.textContent  = rating;
         if (hintEl) hintEl.textContent = RATING_HINTS[rating] || '';
+
+        // Play tick for each new step (steps 1-4; step 5 gets the arpeggio)
+        playSoundRatingTick(rating);
 
         if (progress < 1) {
           _holdRaf = requestAnimationFrame(tick);
@@ -1253,6 +1257,7 @@
     };
 
     function showMilestoneCelebration(streak) {
+      playSoundMilestone();
       // Only once per milestone — stored in localStorage (cosmetic only)
       const key = `milestone-v1-${streak}`;
       if (localStorage.getItem(key)) return;
@@ -1385,6 +1390,7 @@
 
     function triggerSubmitCelebration(onComplete) {
       if (navigator.vibrate) navigator.vibrate([28, 14, 28]);
+      playSoundSubmit();
       const overlay = document.createElement('div');
       overlay.className = 'bloom-overlay';
       document.body.appendChild(overlay);
@@ -1402,6 +1408,7 @@
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
     function triggerRatingConfetti() {
+      playSoundFiveStar();
       const btn = document.getElementById('rating-tap-btn');
       if (!btn) return;
       const rect = btn.getBoundingClientRect();
@@ -1504,6 +1511,72 @@
           }
         } catch {}
       }, 2000);
+    }
+
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // AUDIO
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    let _audioCtx = null;
+
+    function getAudioCtx() {
+      if (!_audioCtx) {
+        _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      // iOS suspends audio until a user gesture — resume on every call
+      if (_audioCtx.state === 'suspended') _audioCtx.resume();
+      return _audioCtx;
+    }
+
+    // Core tone primitive: frequency, volume, duration, wave type, start delay
+    function tone(freq, vol = 0.5, dur = 1.0, type = 'sine', start = 0) {
+      try {
+        const ctx  = getAudioCtx();
+        const osc  = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, ctx.currentTime + start);
+        gain.gain.setValueAtTime(0.001, ctx.currentTime + start);
+        gain.gain.linearRampToValueAtTime(vol, ctx.currentTime + start + 0.014);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + start + dur);
+        osc.start(ctx.currentTime + start);
+        osc.stop(ctx.currentTime + start + dur + 0.06);
+      } catch {}
+    }
+
+    // ── Submit: rich bell (fundamental + 2 harmonics) ────────────────────────
+    function playSoundSubmit() {
+      tone(440,  0.58, 2.4, 'sine');
+      tone(880,  0.30, 1.7, 'sine');
+      tone(1320, 0.16, 1.1, 'sine');
+    }
+
+    // ── Rating ticks: ascending pitches C→E→G→A (step 5 handled by arpeggio) ─
+    const TICK_FREQS = [0, 523, 659, 784, 880, 1047];
+    let _lastTick = 0;
+
+    function playSoundRatingTick(step) {
+      if (step < 1 || step > 4 || step === _lastTick) return;
+      _lastTick = step;
+      tone(TICK_FREQS[step], 0.48, 0.22, 'triangle');
+    }
+
+    // ── 5-star: ascending 4-note arpeggio ─────────────────────────────────────
+    function playSoundFiveStar() {
+      tone(523,  0.48, 0.60, 'sine', 0.00);
+      tone(659,  0.48, 0.55, 'sine', 0.10);
+      tone(784,  0.48, 0.50, 'sine', 0.20);
+      tone(1047, 0.58, 0.72, 'sine', 0.32);
+    }
+
+    // ── Milestone: warm C major chord, long decay ─────────────────────────────
+    function playSoundMilestone() {
+      tone(262, 0.52, 3.8, 'sine');
+      tone(330, 0.42, 3.4, 'sine');
+      tone(392, 0.42, 3.2, 'sine');
+      tone(524, 0.32, 2.8, 'sine');
     }
 
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
