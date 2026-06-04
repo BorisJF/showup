@@ -1081,6 +1081,7 @@
 
     function handleRatingHoldStart(e) {
       e.preventDefault();
+      getAudioCtx(); // unlock audio context during user gesture — must happen here
       if (_holdStart !== null) return; // already holding
       _holdStart = Date.now();
       _lastTick = 0; // reset tick tracker
@@ -1546,37 +1547,83 @@
       } catch {}
     }
 
-    // ── Submit: rich bell (fundamental + 2 harmonics) ────────────────────────
-    function playSoundSubmit() {
-      tone(440,  0.58, 2.4, 'sine');
-      tone(880,  0.30, 1.7, 'sine');
-      tone(1320, 0.16, 1.1, 'sine');
+    // ── Bell primitive: instant attack, exponential decay (sounds like a bowl/bell) ──
+    function bell(freq, amp, decay, delay = 0) {
+      const ctx = getAudioCtx();
+      if (!ctx) return;
+      const t = ctx.currentTime + delay;
+      const osc = ctx.createOscillator();
+      const env = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, t);
+      osc.connect(env);
+      env.connect(ctx.destination);
+      env.gain.setValueAtTime(amp, t);
+      env.gain.exponentialRampToValueAtTime(0.0001, t + decay);
+      osc.start(t);
+      osc.stop(t + decay + 0.05);
     }
 
-    // ── Rating ticks: ascending pitches C→E→G→A (step 5 handled by arpeggio) ─
-    const TICK_FREQS = [0, 523, 659, 784, 880, 1047];
+    // ── Submit: gong — detuned partial pairs create metallic shimmer ──────────
+    function playSoundSubmit() {
+      const ctx = getAudioCtx();
+      if (!ctx) return;
+      const t = ctx.currentTime;
+
+      // Master envelope: slow attack swell (70ms), very long exponential decay
+      const master = ctx.createGain();
+      master.connect(ctx.destination);
+      master.gain.setValueAtTime(0.001, t);
+      master.gain.linearRampToValueAtTime(0.85, t + 0.07);
+      master.gain.exponentialRampToValueAtTime(0.001, t + 6.0);
+
+      // Inharmonic detuned pairs — close-frequency beating = gong shimmer
+      // [freq1, freq2, amplitude]
+      [
+        [110, 113, 0.32],   // deep fundamental rumble
+        [224, 230, 0.24],   // 2nd partial (slightly inharmonic)
+        [378, 386, 0.16],   // 3rd partial
+        [560, 572, 0.10],   // shimmer band
+        [870, 886, 0.06],   // high shimmer
+      ].forEach(([f1, f2, amp]) => {
+        [f1, f2].forEach(freq => {
+          const osc = ctx.createOscillator();
+          const env = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, t);
+          env.gain.setValueAtTime(amp * 0.5, t);
+          osc.connect(env);
+          env.connect(master);
+          osc.start(t);
+          osc.stop(t + 6.5);
+        });
+      });
+    }
+
+    // ── Rating ticks: ascending pentatonic (instant attack, short bell decay) ─
+    const TICK_FREQS = [0, 349, 392, 440, 494, 523]; // F4 G4 A4 B4 C5
     let _lastTick = 0;
 
     function playSoundRatingTick(step) {
       if (step < 1 || step > 4 || step === _lastTick) return;
       _lastTick = step;
-      tone(TICK_FREQS[step], 0.48, 0.22, 'triangle');
+      bell(TICK_FREQS[step], 0.16, 0.20);
     }
 
-    // ── 5-star: ascending 4-note arpeggio ─────────────────────────────────────
+    // ── 5-star: ascending C major arpeggio, bell character ────────────────────
     function playSoundFiveStar() {
-      tone(523,  0.48, 0.60, 'sine', 0.00);
-      tone(659,  0.48, 0.55, 'sine', 0.10);
-      tone(784,  0.48, 0.50, 'sine', 0.20);
-      tone(1047, 0.58, 0.72, 'sine', 0.32);
+      bell(523,  0.20, 0.55, 0.00); // C5
+      bell(659,  0.20, 0.55, 0.12); // E5
+      bell(784,  0.20, 0.55, 0.24); // G5
+      bell(1046, 0.22, 0.80, 0.38); // C6 — lingers
     }
 
-    // ── Milestone: warm C major chord, long decay ─────────────────────────────
+    // ── Milestone: warm C major chord, long resonant decay ────────────────────
     function playSoundMilestone() {
-      tone(262, 0.52, 3.8, 'sine');
-      tone(330, 0.42, 3.4, 'sine');
-      tone(392, 0.42, 3.2, 'sine');
-      tone(524, 0.32, 2.8, 'sine');
+      bell(262,  0.22, 4.0);        // C4
+      bell(330,  0.18, 3.6, 0.05);  // E4 — slight stagger for warmth
+      bell(392,  0.15, 3.2, 0.10);  // G4
+      bell(524,  0.12, 2.8, 0.18);  // C5
     }
 
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
