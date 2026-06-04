@@ -630,51 +630,56 @@
     #splash {
       position: fixed; inset: 0;
       background: var(--bg);
-      display: flex; flex-direction: column;
+      display: flex;
       align-items: center; justify-content: center;
       z-index: 3000;
       transition: opacity 0.75s cubic-bezier(0.4, 0, 0.2, 1);
     }
     #splash.hidden { opacity: 0; pointer-events: none; }
 
-    #splash-logo {
-      width: min(68vw, 280px);
-      height: min(68vw, 280px);
-      opacity: 0;
-      animation: splash-rise 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
-    }
-    @keyframes splash-rise {
-      0%   { opacity: 0; transform: translateY(28px) scale(0.84); }
-      50%  { opacity: 1; }
-      100% { opacity: 1; transform: translateY(0) scale(1); }
+    #sp-svg {
+      width: min(74vw, 270px);
+      height: auto;
+      overflow: visible;
     }
 
-    #splash-name {
-      font-family: 'Lora', Georgia, serif;
-      font-size: clamp(20px, 5.5vw, 26px);
-      font-weight: 400;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--text);
-      margin-top: 36px;
-      opacity: 0;
-      animation: splash-text-in 0.8s ease 0.7s forwards;
+    /* Valley: blur → clear */
+    #sp-valley {
+      animation: spValleyBlur 0.45s ease-out forwards;
+    }
+    @keyframes spValleyBlur {
+      from { filter: blur(14px); opacity: 0.5; }
+      to   { filter: blur(0px);  opacity: 1;   }
     }
 
-    #splash-sub {
-      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
-      font-size: 11px;
-      letter-spacing: 0.24em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-top: 10px;
+    /* Sun: rise up from below */
+    #sp-sun {
       opacity: 0;
-      animation: splash-text-in 0.7s ease 1.0s forwards;
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: spSunRise 0.55s cubic-bezier(0.22, 0, 0, 1) 0.2s forwards;
     }
-
-    @keyframes splash-text-in {
-      from { opacity: 0; transform: translateY(10px); }
+    @keyframes spSunRise {
+      from { opacity: 0; transform: translateY(38px); }
+      55%  { opacity: 1; }
       to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Rays: appear one by one, left to right */
+    #sp-rays line {
+      opacity: 0;
+      animation: spRayOn 0.10s ease forwards;
+    }
+    #sp-r1 { animation-delay: 0.58s; }
+    #sp-r2 { animation-delay: 0.66s; }
+    #sp-r3 { animation-delay: 0.74s; }
+    #sp-r4 { animation-delay: 0.82s; }
+    #sp-r5 { animation-delay: 0.90s; }
+    #sp-r6 { animation-delay: 0.98s; }
+    #sp-r7 { animation-delay: 1.06s; }
+    #sp-r8 { animation-delay: 1.14s; }
+    @keyframes spRayOn {
+      to { opacity: 1; }
     }
 
     /* ── RATING 5-STAR CONFETTI ── */
@@ -768,9 +773,72 @@
 
   <!-- SPLASH SCREEN -->
   <div id="splash">
-    <img id="splash-logo" src="/apple-touch-icon.png" alt="Show Up">
-    <div id="splash-name">Show Up</div>
-    <div id="splash-sub">Your morning ritual</div>
+    <!--
+      SVG logo — three animated layers:
+        1. #sp-sun    (behind) — rises up
+        2. #sp-valley (middle) — blurs in, occludes sun base
+        3. #sp-rays   (front)  — appear left → right
+    -->
+    <svg id="sp-svg" viewBox="0 0 280 230" xmlns="http://www.w3.org/2000/svg" overflow="visible">
+      <defs>
+        <radialGradient id="sp-sg" cx="50%" cy="40%" r="58%">
+          <stop offset="0%"   stop-color="#F5CC60"/>
+          <stop offset="100%" stop-color="#C87C10"/>
+        </radialGradient>
+      </defs>
+
+      <!-- 1. Sun circle — rises from below -->
+      <g id="sp-sun">
+        <circle cx="140" cy="90" r="37" fill="url(#sp-sg)"/>
+      </g>
+
+      <!-- 2. Valley: hills + river — blurs in, overlaps bottom of sun -->
+      <g id="sp-valley">
+        <!-- Left hill -->
+        <path d="M 0,230
+                 C 0,208  8,176  26,152
+                 C 46,124  72,109  98,107
+                 C 112,106 122,112 125,124
+                 C 118,118 108,115  92,118
+                 C 68,122  46,140  30,165
+                 C 14,190   4,212   0,230 Z"
+              fill="#E8D09A" stroke="#1a1209" stroke-width="3" stroke-linejoin="round"/>
+        <!-- Right hill -->
+        <path d="M 280,230
+                 C 276,212 266,190 250,165
+                 C 234,140 212,122 188,118
+                 C 172,115 162,118 155,124
+                 C 158,112 168,106 182,107
+                 C 208,109 234,124 254,152
+                 C 272,176 280,208 280,230 Z"
+              fill="#E8D09A" stroke="#1a1209" stroke-width="3" stroke-linejoin="round"/>
+        <!-- River — dark winding path between the hills -->
+        <path d="M 125,230
+                 C 124,212 121,197 117,182
+                 C 113,166 111,153 116,143
+                 C 121,133 130,128 140,127
+                 C 150,128 159,133 164,143
+                 C 169,153 167,166 163,182
+                 C 159,197 156,212 155,230 Z"
+              fill="#2a1208"/>
+      </g>
+
+      <!-- 3. Rays — appear one by one, left to right -->
+      <!--
+        Sun center (140, 90), radius 37. Ray inner r=44, outer r=86.
+        Angles from vertical: -70°, -50°, -30°, -10°, +10°, +30°, +50°, +70°
+      -->
+      <g id="sp-rays" stroke="#C88018" stroke-width="3.5" stroke-linecap="round">
+        <line id="sp-r1" x1="99"  y1="75"  x2="59"  y2="61"/>   <!-- -70° -->
+        <line id="sp-r2" x1="106" y1="62"  x2="74"  y2="35"/>   <!-- -50° -->
+        <line id="sp-r3" x1="118" y1="52"  x2="97"  y2="16"/>   <!-- -30° -->
+        <line id="sp-r4" x1="132" y1="47"  x2="125" y2="5" />   <!-- -10° -->
+        <line id="sp-r5" x1="148" y1="47"  x2="155" y2="5" />   <!-- +10° -->
+        <line id="sp-r6" x1="162" y1="52"  x2="183" y2="16"/>   <!-- +30° -->
+        <line id="sp-r7" x1="174" y1="62"  x2="206" y2="35"/>   <!-- +50° -->
+        <line id="sp-r8" x1="181" y1="75"  x2="221" y2="61"/>   <!-- +70° -->
+      </g>
+    </svg>
   </div>
 
   <!-- HEADER: date + streak pill -->
@@ -1209,7 +1277,7 @@
             if (!r.ok) throw new Error(`HTTP ${r.status}`);
             return r.json();
           }),
-          new Promise(resolve => setTimeout(resolve, 900)),
+          new Promise(resolve => setTimeout(resolve, 1600)),
         ]);
 
         hideSplash();
