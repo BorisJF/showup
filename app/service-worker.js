@@ -9,13 +9,14 @@
  * to force clients to fetch the new shell.
  */
 
-const CACHE_NAME = 'showup-shell-v8';
+const CACHE_NAME = 'showup-shell-v11';
 
 const SHELL = [
   '/',
   '/index.html',
   '/favicon.png',
   '/apple-touch-icon.png',
+  '/logo.png',
 ];
 
 // ── Install: cache the shell ─────────────────────────────────────────────────
