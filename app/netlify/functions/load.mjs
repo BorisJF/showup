@@ -69,7 +69,11 @@ export default async (req) => {
       LIMIT 7
     `;
 
-    return Response.json({ today, streak, history });
+    // 4. Total entry count (for word cloud gating)
+    const countRows = await sql`SELECT COUNT(*)::int AS cnt FROM entries`;
+    const totalCount = countRows[0]?.cnt ?? 0;
+
+    return Response.json({ today, streak, history, totalCount });
 
   } catch (err) {
     console.error('[load] database error:', err);

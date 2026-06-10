@@ -7,6 +7,13 @@ what that principle means for your day — and hit Submit. The app responds with
 AI-generated message personalised to what you wrote, and tracks how many consecutive days
 you've shown up. That's it. Simple by design.
 
+**Current features (beyond the core check-in):**
+
+- **Weather-aware greeting** — on first visit, a tap fetches local weather via the browser's geolocation API and the Open-Meteo API (no key needed). Shows a plain factual subline like *"Partly cloudy in Paris, 18°C. Rain likely this afternoon."* Cached in localStorage for 30 minutes.
+- **Word cloud** — after 10 entries, a "Your words" section appears beneath Recent Mornings. It pulls all past commitment texts, strips stop words, counts frequency, and renders up to 45 words in Georgia serif scaled 14–54px across six warm brown/beige tones. Rendered with a client-side flex layout; no external library.
+- **Milestone image** — at day 7, 30, and 100, a shareable 540×540 PNG card is generated client-side via the Canvas API and offered for download. Available on demand any time via a "Share milestone →" button next to the streak count (shown once streak ≥ 7). Contains zero entry content — just the day number, "MORNINGS SHOWN UP", and the app name.
+- **"I am special" tap challenge** — a surprise post-submission interstitial that fires on approximately 25% of submissions. See full description below.
+
 **Where it lives.** The app runs at **https://boris-showup.netlify.app** and is hosted entirely
 for free on Netlify (the hosting platform) connected to a Neon database (where your entries are
 stored). The source code lives on GitHub at **https://github.com/BorisJF/showup**.
@@ -43,7 +50,16 @@ behind the scenes:
    5 = showed up like a rock star). The rating auto-saves after 2 seconds of no tapping.
    You can skip it.
 
-6. **Every Sunday at 11am**, a scheduled Cowork task fetches your last 7 entries (focus,
+6. **"I am special" challenge.** On roughly 1 in 4 submissions, after the bloom animation
+   settles, a three-screen interstitial appears over the committed view. First, an offer screen
+   invites you to tap a button reading *"I am going to prevail because I am special."* If you
+   accept, a 10-second silent countdown begins and you tap the same button as many times as
+   possible — each tap plays a short percussive click sound. When time is up, your score is shown
+   with a confetti burst and a bright crystalline chord. If you skip, the overlay disappears and
+   normal flow continues. The challenge fires at most once per calendar day, tracked in
+   localStorage. There is no replay button in the live app.
+
+7. **Every Sunday at 11am**, a scheduled Cowork task fetches your last 7 entries (focus,
    commitment, and rating for each day), writes you a personal reflective letter using Claude,
    and sends it to **borisjf+showup@gmail.com** via Gmail.
 
@@ -71,9 +87,12 @@ ShowUp/
 │   ├── schema.sql              Human-readable description of the database structure
 │   ├── netlify/
 │   │   ├── functions/          Server-side API endpoints (run on Netlify's servers)
-│   │   │   ├── load.mjs            GET  /api/load           Fetches today's entry + streak + history
+│   │   │   ├── load.mjs            GET  /api/load           Fetches today's entry + streak + history + totalCount
 │   │   │   ├── submit.mjs          POST /api/submit         Saves a new entry + calls Claude for message
 │   │   │   ├── rate.mjs            PATCH /api/rate          Saves or clears the self-rating for a past entry
+│   │   │   ├── hint.mjs            POST /api/hint           Rates commitment quality (vague/specific/exceptional)
+│   │   │   ├── words.mjs           GET  /api/words          Returns all commitment texts for the word cloud
+│   │   │   ├── focus-history.mjs   GET  /api/focus-history  Returns frequency of each focus principle
 │   │   │   └── weekly-summary.mjs  GET  /api/weekly-summary Returns last 7 entries for the weekly letter
 │   │   ├── lib/
 │   │   │   └── streak.mjs          Shared utility: calculates the current consecutive-day streak
@@ -217,6 +236,32 @@ If something breaks, you have three ways to go back:
 
 ---
 
+## "I am special" tap challenge
+
+This feature is a surprise interstitial that appears after approximately 1 in 4 daily submissions.
+
+**When it fires.** Inside the submit callback — after the bloom animation, the committed view has rendered, and streak/milestone logic has run — the code evaluates `Math.random() < 0.25`. If the roll passes, and the challenge has not already been shown today (tracked in localStorage under `showup-challenge-YYYY-MM-DD`), the challenge overlay appears after a short delay. The roll happens exactly once per submission.
+
+**The three screens.**
+
+1. **Offer.** Eyebrow text *"Just for today ✦"*, heading *"Something a little different awaits."*, a large dark-brown button with the quote *"I am going to prevail because I am special."*, and a quiet *"Not today →"* skip link. Skipping dismisses the overlay and returns to the normal committed view.
+
+2. **Game.** When the user taps the offer button, a 10-second silent countdown begins (`setTimeout`, no visible timer). A large live tap count is displayed above the same quote button. Each tap plays a short bandpass-filtered noise burst (~40ms, centred at 2200 Hz). Taps register on both `click` and `touchstart` (with `preventDefault`) for reliable mobile performance. When time expires, the button stops responding and the result screen appears automatically.
+
+3. **Result.** The final tap count is displayed large, with the message *"You're truly special. Go and prove it."* A confetti burst fires in the brown/beige palette. A *"Continue →"* button dismisses the overlay. There is no replay button in the live app.
+
+**Sounds — all Web Audio API, nothing hosted.**
+
+| Moment | Sound | Implementation |
+|---|---|---|
+| Game screen appears | Glockenspiel chime | Two sine-wave oscillators at C6 (1046.50 Hz) and G6 (1567.98 Hz), staggered 0.14s, 8ms linear attack, 0.8s exponential decay |
+| Every tap | Percussive click | 40ms bandpass-filtered white noise, centred at 2200 Hz, Q=1.2, sharp amplitude envelope |
+| Result reveal | Diamond chord | E6/G6/C7/E7 sine waves (1318/1568/2093/2637 Hz) staggered 0.06s apart, 15ms attack, 1.1s decay, plus a triangle-wave shimmer at 3136 Hz |
+
+The `AudioContext` is initialised on the offer-button tap (a user gesture), which satisfies iOS PWA audio policy. All three sound functions wrap their logic in `try/catch` and fail silently.
+
+---
+
 ## Weekly letter (automated)
 
 Every Sunday at 11am Paris time, a Cowork scheduled task named **showup-weekly-letter**
@@ -231,4 +276,4 @@ it runs the next time Cowork is opened.
 
 ---
 
-*Last updated: June 1, 2026*
+*Last updated: June 7, 2026*

@@ -31,9 +31,9 @@ export default async (req) => {
     const allPrinciples = [
       'Smile and be nice',
       'Hold their gaze',
-      'Own it — you can fix it',
+      'Own it, you can fix it',
       "Watch who you're around",
-      'Use this moment to act',
+      'You, too, deserve kindness',
       'Present is where you need to be',
     ];
 

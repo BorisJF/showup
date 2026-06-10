@@ -99,6 +99,7 @@
       font-style: italic;
       color: var(--text);
       margin-bottom: 26px;
+      text-wrap: balance;
     }
 
     /* ── REMEMBER THIS ── */
@@ -121,6 +122,7 @@
       font-weight: 400;
       line-height: 1.25;
       color: var(--text);
+      text-wrap: balance;
     }
 
     .remember-line2 {
@@ -129,6 +131,7 @@
       font-style: italic;
       line-height: 1.25;
       color: var(--amber);
+      text-wrap: balance;
     }
 
     .remember-rule {
@@ -205,6 +208,7 @@
       font-weight: 400;
       font-style: normal;
       color: var(--text);
+      text-wrap: pretty;
     }
 
     .radio-circle {
@@ -297,6 +301,31 @@
     .commit-btn:active { opacity: 0.72; }
     .commit-btn:disabled { opacity: 0.32; cursor: not-allowed; }
 
+    /* ── CHANGE PILL ── */
+    .change-btn {
+      display: block;
+      margin: 12px auto 0;
+      background: var(--card);
+      border: 1.5px solid var(--card-border);
+      border-radius: 20px;
+      padding: 7px 20px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: border-color 0.14s, color 0.14s;
+    }
+    .change-btn:hover  { border-color: rgba(40, 32, 26, 0.18); color: var(--text); }
+    .change-btn:active { opacity: 0.7; }
+
+    /* ── ACT LABEL ACCENT ── */
+    .act-letter {
+      color: var(--amber);
+      font-weight: 600;
+    }
+
     .error-msg {
       font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
       font-size: 13px;
@@ -313,6 +342,7 @@
       font-size: 17px;
       line-height: 1.55;
       color: var(--text);
+      text-wrap: pretty;
     }
 
     /* ── DAILY MESSAGE ── */
@@ -339,6 +369,7 @@
       font-style: italic;
       line-height: 1.62;
       color: var(--text);
+      text-wrap: pretty;
     }
 
     /* ── DIVIDER ── */
@@ -376,6 +407,7 @@
       color: var(--muted);
       font-style: italic;
       line-height: 1.4;
+      text-wrap: pretty;
     }
 
     .empty-state {
@@ -432,6 +464,7 @@
       color: var(--muted);
       font-style: italic;
       line-height: 1.4;
+      text-wrap: pretty;
     }
 
     .rating-btn-wrap {
@@ -733,6 +766,275 @@
       color: var(--muted);
       margin-top: 6px;
     }
+
+    /* ── WEATHER SUBLINE ────────────────────────────── */
+    .weather-subline {
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+      font-size: 12px;
+      color: var(--muted);
+      text-align: center;
+      margin-top: -18px;
+      margin-bottom: 22px;
+      min-height: 16px;
+      line-height: 1.5;
+    }
+
+    .weather-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-family: inherit;
+      font-size: 12px;
+      cursor: pointer;
+      padding: 0;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      opacity: 0.65;
+    }
+    .weather-btn:hover { opacity: 1; }
+
+    /* ── WORD CLOUD ─────────────────────────────────── */
+    .wordcloud-container {
+      margin-top: 44px;
+    }
+
+    .wordcloud-bg {
+      border-radius: 16px;
+      padding: 28px 18px 24px;
+      background: linear-gradient(160deg, #fbf9f4 0%, #f4efe4 100%);
+      min-height: 180px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px 13px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .cloud-word {
+      font-family: Georgia, 'Times New Roman', serif;
+      cursor: default;
+      line-height: 1.2;
+      display: inline-block;
+      transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .cloud-word:hover { transform: scale(1.12); }
+
+    .cloud-empty {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-style: italic;
+      font-size: 15px;
+      color: #9c7a52;
+      text-align: center;
+      padding: 20px 8px;
+      line-height: 1.8;
+      width: 100%;
+    }
+
+    /* ── MILESTONE IMAGE MODAL ──────────────────────── */
+    .ms-img-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 4000;
+      background: rgba(40, 32, 26, 0.72);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 20px;
+      animation: msiFadeIn 0.28s ease forwards;
+    }
+
+    @keyframes msiFadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    .ms-img-modal.hiding {
+      animation: msiFadeOut 0.28s ease forwards;
+    }
+
+    @keyframes msiFadeOut {
+      from { opacity: 1; }
+      to   { opacity: 0; }
+    }
+
+    .ms-img-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 20px;
+      max-width: 360px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 24px 64px rgba(40, 32, 26, 0.32);
+    }
+
+    .ms-img-canvas {
+      width: 100%;
+      border-radius: 10px;
+      display: block;
+    }
+
+    .ms-img-actions {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .ms-img-download {
+      flex: 1;
+      background: #4a3826;
+      color: #fbf9f4;
+      border: none;
+      border-radius: 100px;
+      padding: 13px 18px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      letter-spacing: 0.03em;
+    }
+
+    .ms-img-close {
+      background: transparent;
+      border: 1.5px solid rgba(40, 32, 26, 0.18);
+      color: var(--muted);
+      border-radius: 100px;
+      padding: 13px 16px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    /* ── SPECIAL CHALLENGE ──────────────────────────── */
+    .sp-overlay {
+      position: fixed; inset: 0; z-index: 5000;
+      background: rgba(74, 56, 38, 0.65);
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px 20px;
+      animation: spOverIn 0.35s ease forwards;
+    }
+    @keyframes spOverIn  { from { opacity: 0; } to { opacity: 1; } }
+    .sp-overlay.hiding   { animation: spOverOut 0.28s ease forwards; }
+    @keyframes spOverOut { from { opacity: 1; } to { opacity: 0; } }
+
+    .sp-card {
+      background: #fbf9f4; border: 1px solid #ddd2bd; border-radius: 22px;
+      padding: 36px 28px; max-width: 380px; width: 100%;
+      box-shadow: 0 12px 50px rgba(100,80,50,.18); text-align: center;
+    }
+
+    .sp-phase { display: none; }
+    .sp-phase.on { display: block; animation: spPhaseIn .35s ease; }
+    @keyframes spPhaseIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    .sp-eyebrow {
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+      font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+      color: #9c8a6f; margin-bottom: 18px;
+    }
+    .sp-heading { font-size: 22px; line-height: 1.35; color: #4a3826; margin-bottom: 10px; }
+    .sp-sub { font-size: 14px; color: #9c8a6f; font-style: italic; margin-bottom: 32px; }
+
+    .sp-big-btn {
+      width: 100%; padding: 22px 16px; background: #6b4f3a; color: #fbf9f4;
+      border: none; border-radius: 14px; font-family: Georgia, serif;
+      font-size: 17px; line-height: 1.4; cursor: pointer;
+      box-shadow: 0 6px 24px rgba(100,70,30,.22);
+      transition: background .18s, transform .18s, box-shadow .18s;
+    }
+    .sp-big-btn:hover {
+      background: #4a3826; transform: translateY(-2px);
+      box-shadow: 0 10px 32px rgba(100,70,30,.3);
+    }
+    .sp-big-btn:active { transform: translateY(1px); }
+
+    .sp-skip {
+      display: block; margin-top: 16px; font-size: 13px; color: #9c8a6f;
+      cursor: pointer; font-style: italic; background: none; border: none;
+      font-family: Georgia, serif; width: 100%;
+    }
+    .sp-skip:hover { color: #4a3826; }
+
+    .sp-tap-label {
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+      font-size: 13px; letter-spacing: .08em; text-transform: uppercase;
+      color: #9c8a6f; margin-bottom: 10px;
+    }
+    .sp-tap-count {
+      display: block; font-size: 88px; font-weight: 700; color: #6b4f3a;
+      line-height: 1; margin-bottom: 28px;
+      transition: transform .08s, color .08s;
+    }
+    .sp-tap-count.sp-pop { transform: scale(1.2); color: #8a6d4a; }
+
+    .sp-tap-btn {
+      width: 100%; padding: 26px 16px; background: #6b4f3a; color: #fbf9f4;
+      border: none; border-radius: 16px; font-family: Georgia, serif;
+      font-size: 18px; line-height: 1.4; cursor: pointer; user-select: none;
+      box-shadow: 0 6px 24px rgba(100,70,30,.24);
+      transition: transform .07s, box-shadow .07s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .sp-tap-btn:active { transform: scale(.96); box-shadow: 0 2px 10px rgba(100,70,30,.18); }
+
+    .sp-result-score {
+      display: block; font-size: 100px; font-weight: 700; color: #6b4f3a;
+      line-height: 1; margin: 0 0 4px;
+    }
+    .sp-result-unit {
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+      font-size: 13px; letter-spacing: .1em; text-transform: uppercase;
+      color: #9c8a6f; margin-bottom: 28px;
+    }
+    .sp-result-msg { font-size: 20px; line-height: 1.5; color: #4a3826; margin-bottom: 32px; }
+    .sp-result-msg strong { color: #8a6d4a; font-weight: 700; font-style: normal; }
+
+    .sp-done-btn {
+      padding: 14px 32px; background: transparent;
+      border: 1.5px solid #8a6d4a; border-radius: 100px;
+      font-family: Georgia, serif; font-size: 14px; color: #8a6d4a;
+      cursor: pointer; transition: .2s;
+    }
+    .sp-done-btn:hover { background: #8a6d4a; color: #fbf9f4; }
+
+    .sp-confetti-wrap {
+      position: fixed; inset: 0; pointer-events: none;
+      overflow: hidden; z-index: 6000;
+    }
+    .sp-dot {
+      position: absolute; border-radius: 2px; opacity: 0;
+      animation: spDotFall 1.6s ease-in forwards;
+    }
+    @keyframes spDotFall {
+      0%   { opacity: 1; transform: translateY(-10px) rotate(0deg) scale(1); }
+      100% { opacity: 0; transform: translateY(100vh) rotate(900deg) scale(.4); }
+    }
+
+    /* ── SHARE MILESTONE BUTTON ─────────────────────── */
+    .share-milestone-btn {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      padding: 0;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      opacity: 0.65;
+      display: block;
+      text-align: right;
+      margin-top: 5px;
+    }
+
+    .share-milestone-btn:hover { opacity: 1; }
   </style>
 </head>
 <body>
@@ -751,11 +1053,16 @@
         <span class="streak-pill-text" id="streak-pill-text">0 -day streak</span>
       </div>
       <div class="streak-milestone-line" id="streak-milestone"></div>
+      <button class="share-milestone-btn" id="share-milestone-btn" style="display:none"
+        onclick="showMilestoneImageModal()">Share milestone →</button>
     </div>
   </div>
 
   <!-- GREETING -->
-  <div class="greeting" id="greeting">Good morning.</div>
+  <div class="greeting" id="greeting">Good morning, Boris.</div>
+
+  <!-- WEATHER SUBLINE -->
+  <div class="weather-subline" id="weather-subline"></div>
 
   <!-- REMEMBER THIS -->
   <div class="remember-section">
@@ -779,6 +1086,17 @@
     <div class="loading">...</div>
   </div>
 
+  <!-- WORD CLOUD -->
+  <div class="wordcloud-container" id="wordcloud-section" style="display:none">
+    <div class="section-header-row">
+      <span class="section-label">Your words</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="wordcloud-bg" id="wordcloud-bg">
+      <div class="cloud-empty">Loading…</div>
+    </div>
+  </div>
+
 
   <script>
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -786,12 +1104,12 @@
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
     const PRINCIPLES = [
-      { letter: 'S', name: 'Smile and be nice' },
-      { letter: 'H', name: 'Hold their gaze' },
-      { letter: 'O', name: 'Own it — you can fix it' },
-      { letter: 'W', name: "Watch who you're around" },
-      { letter: 'U', name: 'Use this moment to act' },
-      { letter: 'P', name: 'Present is where you need to be' },
+      { letter: 'S', name: 'Smile and be nice',              act: "When I pass someone, I'll smile first" },
+      { letter: 'H', name: 'Hold their gaze',                act: "When we talk, I'll really look at them" },
+      { letter: 'O', name: 'Own it, you can fix it',         act: "When I slip, I'll own it out loud" },
+      { letter: 'W', name: "Watch who you're around",        act: "Today I'll lean toward the people who lift me by…" },
+      { letter: 'U', name: 'You, too, deserve kindness',     act: "Today I'll be kind to myself by…" },
+      { letter: 'P', name: 'Present is where you need to be', act: "When I catch myself drifting, I'll…" },
     ];
 
     // Daily affirmations for "Remember this" — rotate by date
@@ -836,9 +1154,9 @@
 
     function getGreeting() {
       const h = new Date().getHours();
-      if (h >= 4 && h < 12) return 'Good morning.';
-      if (h >= 12 && h < 18) return 'Good afternoon.';
-      return 'Good evening.';
+      if (h >= 4 && h < 12) return 'Good morning, Boris.';
+      if (h >= 12 && h < 18) return 'Good afternoon, Boris.';
+      return 'Good evening, Boris.';
     }
 
     function getDailyAffirmation(dateStr) {
@@ -870,13 +1188,21 @@
       const s = (streak !== null && streak !== undefined) ? streak : 0;
       document.getElementById('streak-pill-text').textContent = `${s} -day streak`;
       document.getElementById('streak-milestone').textContent = getMilestone(s);
+
+      // Share milestone button — visible once streak ≥ 7
+      _currentStreak = s;
+      const shareBtn = document.getElementById('share-milestone-btn');
+      if (shareBtn) shareBtn.style.display = s >= 7 ? '' : 'none';
+
+      // Weather (only init once per session)
+      if (!_weatherInited) { _weatherInited = true; initWeather(); }
     }
 
     function renderFreshDay() {
       selectedFocus = null;
 
-      const cards = PRINCIPLES.map(p => `
-        <div class="focus-card" data-name="${esc(p.name)}" onclick="selectCard(this)">
+      const cards = PRINCIPLES.map((p, i) => `
+        <div class="focus-card" data-idx="${i}" onclick="selectCard(this)">
           <div class="letter-badge">${p.letter}</div>
           <div class="card-name">${esc(p.name)}</div>
           <div class="radio-circle"></div>
@@ -884,18 +1210,42 @@
       `).join('');
 
       document.getElementById('checkin-section').innerHTML = `
+        <div id="focus-step">
+          <div class="section-header-row">
+            <span class="section-label">Show up one way today</span>
+            <div class="section-line"></div>
+          </div>
+          ${cards}
+        </div>
+        <div id="act-step"></div>
+      `;
+    }
+
+    function selectCard(card) {
+      const p = PRINCIPLES[+card.dataset.idx];
+      selectedFocus = p.name;
+
+      document.getElementById('focus-step').innerHTML = `
         <div class="section-header-row">
-          <span class="section-label">Choose today's focus</span>
+          <span class="section-label">Today you're showing up</span>
           <div class="section-line"></div>
         </div>
+        <div class="focus-card selected" style="cursor:default">
+          <div class="letter-badge">${p.letter}</div>
+          <div class="card-name">${esc(p.name)}</div>
+          <div class="radio-circle"></div>
+        </div>
+        <button class="change-btn" onclick="renderFreshDay()">or change</button>
+      `;
 
-        ${cards}
-
+      document.getElementById('act-step').innerHTML = `
         <div class="commitment-group">
-          <label class="field-label" for="commitment-input">Commit to the day</label>
+          <label class="field-label" for="commitment-input">
+            <span class="act-letter">A</span>&nbsp;Act today
+          </label>
           <textarea
             id="commitment-input"
-            placeholder="Write it down — even one line."
+            placeholder="${esc(p.act)}"
             oninput="handleCommitmentInput()"
             rows="3"
           ></textarea>
@@ -903,16 +1253,13 @@
         </div>
 
         <button class="commit-btn" id="commit-btn" onclick="handleCommit()">
-          Commit to the day
+          Show Up!
         </button>
         <div class="error-msg" id="error-msg" style="display:none"></div>
       `;
-    }
 
-    function selectCard(card) {
-      document.querySelectorAll('.focus-card').forEach(c => c.classList.remove('selected'));
-      card.classList.add('selected');
-      selectedFocus = card.dataset.name;
+      const ta = document.getElementById('commitment-input');
+      if (ta) ta.focus();
     }
 
     function renderCommittedDay(entry) {
@@ -930,7 +1277,7 @@
         </div>
 
         <div class="section-header-row" style="margin-top:20px">
-          <span class="section-label">Your commitment</span>
+          <span class="section-label">Today's act</span>
           <div class="section-line"></div>
         </div>
         <div class="locked-field">
@@ -1184,6 +1531,7 @@
         hideSplash();
         renderHeader(date, data.streak ?? 0);
         renderHistory(data.history || []);
+        loadWordCloud(data.totalCount ?? 0);
 
         // Show rating prompt if yesterday has an unrated entry (once per session)
         if (!ratingPromptHandled) {
@@ -1301,7 +1649,7 @@
         return;
       }
       if (!commitment) {
-        errorEl.textContent = 'Please add your commitment before submitting.';
+        errorEl.textContent = 'Add how you’ll act on it today before showing up.';
         errorEl.style.display = 'block';
         return;
       }
@@ -1318,7 +1666,7 @@
       }
 
       btn.disabled = true;
-      btn.textContent = 'Committing...';
+      btn.textContent = 'Showing up…';
       errorEl.style.display = 'none';
 
       try {
@@ -1341,6 +1689,17 @@
               renderHeader(date, newStreak);
               renderHistory(fresh.history || []);
               if (newStreak > 0 && newStreak % 10 === 0) showMilestoneCelebration(newStreak);
+              if ([7, 30, 100].includes(newStreak)) {
+                const imgKey = `milestone-img-v1-${newStreak}`;
+                if (!localStorage.getItem(imgKey)) {
+                  localStorage.setItem(imgKey, '1');
+                  setTimeout(() => showMilestoneImageModal(newStreak), newStreak % 10 === 0 ? 1200 : 400);
+                }
+              }
+              // "I am special" challenge — ~25%, once per day, after all else settles
+              if (shouldShowChallenge()) {
+                setTimeout(showSpecialChallenge, 900);
+              }
             })
             .catch(() => {});
         });
@@ -1348,7 +1707,7 @@
       } catch (err) {
         console.error('Submit error:', err);
         btn.disabled = false;
-        btn.textContent = 'Commit to the day';
+        btn.textContent = 'Show Up!';
         errorEl.textContent = 'Something went wrong — please try again.';
         errorEl.style.display = 'block';
       }
@@ -1533,66 +1892,569 @@
       osc.stop(t + decay + 0.05);
     }
 
-    // ── Submit: gong — detuned partial pairs create metallic shimmer ──────────
+    // ── Submit: Glacier — cold pure detuned pairs, instant attack, long fade ──
     function playSoundSubmit() {
       const ctx = getAudioCtx();
       if (!ctx) return;
       const t = ctx.currentTime;
-
-      // Master envelope: slow attack swell (70ms), very long exponential decay
-      const master = ctx.createGain();
-      master.connect(ctx.destination);
-      master.gain.setValueAtTime(0.001, t);
-      master.gain.linearRampToValueAtTime(0.85, t + 0.07);
-      master.gain.exponentialRampToValueAtTime(0.001, t + 6.0);
-
-      // Inharmonic detuned pairs — close-frequency beating = gong shimmer
-      // [freq1, freq2, amplitude]
-      [
-        [110, 113, 0.32],   // deep fundamental rumble
-        [224, 230, 0.24],   // 2nd partial (slightly inharmonic)
-        [378, 386, 0.16],   // 3rd partial
-        [560, 572, 0.10],   // shimmer band
-        [870, 886, 0.06],   // high shimmer
-      ].forEach(([f1, f2, amp]) => {
+      [[1047, 1049, 0.32, 8.0], [2093, 2095, 0.10, 5.0]].forEach(([f1, f2, amp, dec]) => {
         [f1, f2].forEach(freq => {
           const osc = ctx.createOscillator();
           const env = ctx.createGain();
           osc.type = 'sine';
           osc.frequency.setValueAtTime(freq, t);
-          env.gain.setValueAtTime(amp * 0.5, t);
           osc.connect(env);
-          env.connect(master);
+          env.connect(ctx.destination);
+          env.gain.setValueAtTime(amp, t);
+          env.gain.exponentialRampToValueAtTime(0.0001, t + dec);
           osc.start(t);
-          osc.stop(t + 6.5);
+          osc.stop(t + dec + 0.1);
         });
       });
     }
 
-    // ── Rating ticks: ascending pentatonic (instant attack, short bell decay) ─
-    const TICK_FREQS = [0, 349, 392, 440, 494, 523]; // F4 G4 A4 B4 C5
+    // ── Rating ticks: Crystal — pure high sines, clean short decay ───────────
+    const TICK_FREQS = [0, 1047, 1175, 1319, 1397, 1568]; // C6 D6 E6 F6 G6
     let _lastTick = 0;
 
     function playSoundRatingTick(step) {
       if (step < 1 || step > 4 || step === _lastTick) return;
       _lastTick = step;
-      bell(TICK_FREQS[step], 0.16, 0.20);
+      const ctx = getAudioCtx();
+      if (!ctx) return;
+      const t = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const env = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(TICK_FREQS[step], t);
+      osc.connect(env);
+      env.connect(ctx.destination);
+      env.gain.setValueAtTime(0.18, t);
+      env.gain.exponentialRampToValueAtTime(0.0001, t + 0.55);
+      osc.start(t);
+      osc.stop(t + 0.6);
     }
 
-    // ── 5-star: ascending C major arpeggio, bell character ────────────────────
+    // ── 5-star: Champagne — rising sparkle cascade ────────────────────────────
     function playSoundFiveStar() {
-      bell(523,  0.20, 0.55, 0.00); // C5
-      bell(659,  0.20, 0.55, 0.12); // E5
-      bell(784,  0.20, 0.55, 0.24); // G5
-      bell(1046, 0.22, 0.80, 0.38); // C6 — lingers
+      const ctx = getAudioCtx();
+      if (!ctx) return;
+      const t = ctx.currentTime;
+      [784, 1047, 1319, 1568, 2093].forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const env = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, t);
+        osc.connect(env);
+        env.connect(ctx.destination);
+        const s = t + i * 0.07;
+        env.gain.setValueAtTime(0.22, s);
+        env.gain.exponentialRampToValueAtTime(0.0001, s + 1.4 - i * 0.1);
+        osc.start(s);
+        osc.stop(s + 1.5);
+      });
     }
 
-    // ── Milestone: warm C major chord, long resonant decay ────────────────────
+    // ── Milestone: Carillon — three-bell tower sequence ──────────────────────
     function playSoundMilestone() {
-      bell(262,  0.22, 4.0);        // C4
-      bell(330,  0.18, 3.6, 0.05);  // E4 — slight stagger for warmth
-      bell(392,  0.15, 3.2, 0.10);  // G4
-      bell(524,  0.12, 2.8, 0.18);  // C5
+      const ctx = getAudioCtx();
+      if (!ctx) return;
+      const t = ctx.currentTime;
+      [[523, t + 0.00], [392, t + 0.45], [784, t + 0.85]].forEach(([fund, s]) => {
+        [[fund, fund + 2, 0.38], [fund * 2, fund * 2 + 3, 0.13]].forEach(([f1, f2, amp]) => {
+          [f1, f2].forEach(freq => {
+            const osc = ctx.createOscillator();
+            const env = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, s);
+            osc.connect(env);
+            env.connect(ctx.destination);
+            env.gain.setValueAtTime(amp, s);
+            env.gain.exponentialRampToValueAtTime(0.0001, s + 3.5);
+            osc.start(s);
+            osc.stop(s + 3.6);
+          });
+        });
+      });
+    }
+
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // SPECIAL CHALLENGE  ("I am special")
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    const SP_QUOTE = '"I am going to prevail<br>because I am special."';
+
+    function shouldShowChallenge() {
+      const key = `showup-challenge-${getTodayDate()}`;
+      if (localStorage.getItem(key)) return false;   // already shown today
+      if (Math.random() >= 0.25) return false;        // 75% skip
+      localStorage.setItem(key, '1');
+      return true;
+    }
+
+    let _spCount  = 0;
+    let _spActive = false;
+    let _spTimer  = null;
+    let _spEl     = null;     // root overlay element
+
+    function showSpecialChallenge() {
+      try {
+        const overlay = document.createElement('div');
+        overlay.className = 'sp-overlay';
+        overlay.innerHTML = `
+          <div class="sp-card">
+            <div class="sp-phase on" id="sp-offer">
+              <div class="sp-eyebrow">Just for today ✦</div>
+              <div class="sp-heading">Something a little different awaits.</div>
+              <div class="sp-sub">This only comes around now and then.</div>
+              <button class="sp-big-btn" id="sp-accept">${SP_QUOTE}</button>
+              <button class="sp-skip" id="sp-skip">Not today →</button>
+            </div>
+            <div class="sp-phase" id="sp-game">
+              <div class="sp-tap-label">times tapped</div>
+              <span class="sp-tap-count" id="sp-cnt">0</span>
+              <button class="sp-tap-btn" id="sp-tap">${SP_QUOTE}</button>
+            </div>
+            <div class="sp-phase" id="sp-result">
+              <div class="sp-eyebrow">You did it</div>
+              <span class="sp-result-score" id="sp-final">0</span>
+              <div class="sp-result-unit">times</div>
+              <div class="sp-result-msg">You're truly special.<br><strong>Go and prove it.</strong></div>
+              <button class="sp-done-btn" id="sp-done">Continue →</button>
+            </div>
+          </div>`;
+        document.body.appendChild(overlay);
+        _spEl = overlay;
+
+        overlay.querySelector('#sp-accept').addEventListener('click', _spStartGame);
+        overlay.querySelector('#sp-skip').addEventListener('click', _spDismiss);
+        overlay.querySelector('#sp-done').addEventListener('click', _spDismiss);
+      } catch(e) { /* fail silently */ }
+    }
+
+    function _spPhase(id) {
+      if (!_spEl) return;
+      ['sp-offer','sp-game','sp-result'].forEach(p => {
+        const el = _spEl.querySelector('#' + p);
+        if (el) el.classList.toggle('on', p === id);
+      });
+    }
+
+    function _spDismiss() {
+      clearTimeout(_spTimer);
+      _spActive = false;
+      if (!_spEl) return;
+      _spEl.classList.add('hiding');
+      setTimeout(() => { if (_spEl) { _spEl.remove(); _spEl = null; } }, 300);
+    }
+
+    function _spStartGame() {
+      try {
+        _spCount = 0; _spActive = true;
+        const cntEl = _spEl?.querySelector('#sp-cnt');
+        if (cntEl) cntEl.textContent = '0';
+        _spPhase('sp-game');
+        playGlockenspiel();
+        _spTimer = setTimeout(() => { _spActive = false; _spEndGame(); }, 10000);
+
+        const tapBtn = _spEl?.querySelector('#sp-tap');
+        if (tapBtn) {
+          tapBtn.addEventListener('click', _spTap);
+          tapBtn.addEventListener('touchstart', e => { e.preventDefault(); _spTap(); }, { passive: false });
+        }
+      } catch(e) { _spDismiss(); }
+    }
+
+    function _spTap() {
+      if (!_spActive) return;
+      _spCount++;
+      playChallengeClick();
+      const el = _spEl?.querySelector('#sp-cnt');
+      if (!el) return;
+      el.textContent = _spCount;
+      el.classList.remove('sp-pop');
+      void el.offsetWidth;                      // reflow — restart transition
+      el.classList.add('sp-pop');
+      setTimeout(() => el.classList.remove('sp-pop'), 100);
+    }
+
+    function _spEndGame() {
+      clearTimeout(_spTimer);
+      try {
+        const el = _spEl?.querySelector('#sp-final');
+        if (el) el.textContent = _spCount;
+        _spPhase('sp-result');
+        playChallengeResult();
+        _spConfetti();
+      } catch(e) { _spDismiss(); }
+    }
+
+    // ── Challenge sounds ─────────────────────────────────────────────────────
+
+    function playGlockenspiel() {
+      try {
+        const ac = getAudioCtx();
+        [1046.50, 1567.98].forEach((freq, i) => {
+          const t = ac.currentTime + i * 0.14;
+          const osc = ac.createOscillator(), gain = ac.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, t);
+          gain.gain.setValueAtTime(0, t);
+          gain.gain.linearRampToValueAtTime(0.25, t + 0.008);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.8);
+          osc.connect(gain); gain.connect(ac.destination);
+          osc.start(t); osc.stop(t + 0.82);
+        });
+      } catch {}
+    }
+
+    function playChallengeClick() {
+      try {
+        const ac = getAudioCtx();
+        const t  = ac.currentTime;
+        const buf  = ac.createBuffer(1, Math.ceil(ac.sampleRate * 0.04), ac.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < data.length; i++)
+          data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 4);
+        const src  = ac.createBufferSource();
+        const filt = ac.createBiquadFilter();
+        const gain = ac.createGain();
+        filt.type = 'bandpass'; filt.frequency.value = 2200; filt.Q.value = 1.2;
+        src.buffer = buf;
+        gain.gain.setValueAtTime(0.35, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.04);
+        src.connect(filt); filt.connect(gain); gain.connect(ac.destination);
+        src.start(t); src.stop(t + 0.05);
+      } catch {}
+    }
+
+    function playChallengeResult() {
+      try {
+        const ac = getAudioCtx();
+        [1318.51, 1567.98, 2093.00, 2637.02].forEach((freq, i) => {
+          const t = ac.currentTime + i * 0.06;
+          const osc = ac.createOscillator(), gain = ac.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, t);
+          gain.gain.setValueAtTime(0, t);
+          gain.gain.linearRampToValueAtTime(0.18, t + 0.015);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 1.1);
+          osc.connect(gain); gain.connect(ac.destination);
+          osc.start(t); osc.stop(t + 1.15);
+        });
+        const osc2 = ac.createOscillator(), g2 = ac.createGain();
+        osc2.type = 'triangle';
+        osc2.frequency.setValueAtTime(3136, ac.currentTime);
+        g2.gain.setValueAtTime(0.08, ac.currentTime);
+        g2.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.9);
+        osc2.connect(g2); g2.connect(ac.destination);
+        osc2.start(); osc2.stop(ac.currentTime + 0.9);
+      } catch {}
+    }
+
+    function _spConfetti() {
+      try {
+        const wrap = document.createElement('div');
+        wrap.className = 'sp-confetti-wrap';
+        document.body.appendChild(wrap);
+        const colors = ['#8a6d4a','#6b4f3a','#a8895f','#ddd2bd','#4a3826','#c8b89a','#e0d4bc'];
+        for (let i = 0; i < 70; i++) {
+          const d = document.createElement('div');
+          d.className = 'sp-dot';
+          d.style.left   = Math.random() * 100 + 'vw';
+          d.style.top    = '-12px';
+          d.style.background       = colors[Math.floor(Math.random() * colors.length)];
+          d.style.animationDelay   = (Math.random() * 1.4) + 's';
+          d.style.animationDuration = (1.0 + Math.random() * 0.9) + 's';
+          const size = 5 + Math.random() * 9;
+          d.style.width        = size + 'px';
+          d.style.height       = (size * (0.4 + Math.random() * 0.8)) + 'px';
+          d.style.borderRadius = Math.random() > 0.5 ? '50%' : '1px';
+          wrap.appendChild(d);
+        }
+        setTimeout(() => wrap.remove(), 3200);
+      } catch {}
+    }
+
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // WEATHER
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    const WX_CACHE_KEY = 'showup-weather-v1';
+    const WX_TTL = 30 * 60 * 1000; // 30 minutes
+    let _weatherInited = false;
+
+    const WMO_DESC = {
+      0:'Clear sky', 1:'Mainly clear', 2:'Partly cloudy', 3:'Overcast',
+      45:'Foggy', 48:'Foggy',
+      51:'Light drizzle', 53:'Drizzle', 55:'Heavy drizzle',
+      61:'Light rain', 63:'Rainy', 65:'Heavy rain',
+      71:'Light snow', 73:'Snowy', 75:'Heavy snow',
+      80:'Light showers', 81:'Showers', 82:'Heavy showers',
+      85:'Snow showers', 86:'Snow showers',
+      95:'Thunderstorm', 96:'Thunderstorm', 99:'Thunderstorm',
+    };
+
+    function getCachedWeather() {
+      try {
+        const raw = localStorage.getItem(WX_CACHE_KEY);
+        if (!raw) return null;
+        const { ts, data } = JSON.parse(raw);
+        if (Date.now() - ts < WX_TTL) return data;
+      } catch {}
+      return null;
+    }
+
+    function setCachedWeather(data) {
+      try {
+        localStorage.setItem(WX_CACHE_KEY, JSON.stringify({ ts: Date.now(), data }));
+      } catch {}
+    }
+
+    function showWeatherSubline(text) {
+      const el = document.getElementById('weather-subline');
+      if (el) el.textContent = text;
+    }
+
+    async function fetchAndShowWeather(lat, lon) {
+      try {
+        const [wxRes, geoRes] = await Promise.all([
+          fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weathercode&hourly=precipitation_probability&forecast_days=1&timezone=auto`),
+          fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`),
+        ]);
+        if (!wxRes.ok) return;
+        const wx = await wxRes.json();
+        const geo = geoRes.ok ? await geoRes.json() : null;
+
+        const temp = Math.round(wx.current.temperature_2m);
+        const code = wx.current.weathercode;
+        const cond = WMO_DESC[code] || 'Clear sky';
+        const city = geo?.address?.city || geo?.address?.town || geo?.address?.village || geo?.address?.county || '';
+
+        // Afternoon rain: average precipitation_probability for hours 12–17
+        const pp = wx.hourly?.precipitation_probability || [];
+        const avgPP = pp.slice(12, 18).reduce((a, b) => a + b, 0) / (pp.slice(12, 18).length || 1);
+        const rainNote = avgPP > 40 ? ' Rain likely this afternoon.' : '';
+
+        const cityPart = city ? ` in ${city}` : '';
+        const text = `${cond}${cityPart}, ${temp}°C.${rainNote}`;
+
+        setCachedWeather({ text });
+        showWeatherSubline(text);
+      } catch {}
+    }
+
+    function initWeather() {
+      const el = document.getElementById('weather-subline');
+      if (!el) return;
+
+      // Show cached data immediately if fresh
+      const cached = getCachedWeather();
+      if (cached) { showWeatherSubline(cached.text); return; }
+
+      // Show button to request geolocation (required for iOS PWA first-time)
+      if (!navigator.geolocation) return;
+      const btn = document.createElement('button');
+      btn.className = 'weather-btn';
+      btn.textContent = 'Get local weather';
+      btn.onclick = () => {
+        btn.remove();
+        navigator.geolocation.getCurrentPosition(
+          pos => fetchAndShowWeather(pos.coords.latitude, pos.coords.longitude),
+          () => {} // permission denied — stay silent
+        );
+      };
+      el.appendChild(btn);
+    }
+
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // WORD CLOUD
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    const STOP_WORDS = new Set([
+      'the','and','to','i','a','in','my','it','is','that','of','for','on','with',
+      'this','was','be','have','do','at','from','by','not','but','or','we','an',
+      'so','up','if','as','me','will','all','just','into','how','more','out','can',
+      'had','has','been','were','are','they','their','there','about','would','when',
+      'what','get','got','did','make','made','one','our','day','today','time','very',
+      'will','then','than','its','also','like','im','ive','ill','dont','wont',
+    ]);
+
+    const CLOUD_COLORS = ['#6b4f3a','#8a6d4a','#a8895f','#4a3826','#7d6444','#9c7a52'];
+
+    async function loadWordCloud(totalCount) {
+      const section = document.getElementById('wordcloud-section');
+      if (!section) return;
+
+      // Show "on its way" before 10 entries
+      if (totalCount < 10) {
+        if (totalCount > 0) {
+          section.style.display = '';
+          document.getElementById('wordcloud-bg').innerHTML =
+            '<div class="cloud-empty">Keep showing up —<br>your word cloud is on its way.</div>';
+        }
+        return;
+      }
+
+      section.style.display = '';
+
+      try {
+        const res = await fetch('/api/words');
+        if (!res.ok) { section.style.display = 'none'; return; }
+        const { texts } = await res.json();
+        if (!texts?.length) { section.style.display = 'none'; return; }
+
+        // Tokenize and count
+        const freq = {};
+        texts.forEach(t => {
+          if (!t) return;
+          t.toLowerCase()
+            .replace(/[^a-z\s]/g, ' ')
+            .split(/\s+/)
+            .filter(w => w.length > 2 && !STOP_WORDS.has(w))
+            .forEach(w => { freq[w] = (freq[w] || 0) + 1; });
+        });
+
+        const sorted = Object.entries(freq).sort((a, b) => b[1] - a[1]).slice(0, 45);
+        if (!sorted.length) { section.style.display = 'none'; return; }
+
+        const maxFreq = sorted[0][1];
+        const minFreq = sorted[sorted.length - 1][1];
+        const range   = Math.max(maxFreq - minFreq, 1);
+
+        // Shuffle so the layout isn't just a sorted list
+        const shuffled = [...sorted];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+
+        const bg = document.getElementById('wordcloud-bg');
+        bg.innerHTML = '';
+        shuffled.forEach(([word, count], idx) => {
+          const t = (count - minFreq) / range;        // 0..1
+          const size  = Math.round(14 + t * 40);      // 14px..54px
+          const color = CLOUD_COLORS[idx % CLOUD_COLORS.length];
+          const span  = document.createElement('span');
+          span.className = 'cloud-word';
+          span.textContent = word;
+          span.style.cssText = `font-size:${size}px;color:${color};`;
+          bg.appendChild(span);
+        });
+      } catch {
+        section.style.display = 'none';
+      }
+    }
+
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // MILESTONE IMAGE
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    let _currentStreak = 0;
+
+    function renderMilestoneCanvas(streak) {
+      const W = 540, H = 540;
+      const canvas = document.createElement('canvas');
+      canvas.width = W; canvas.height = H;
+      const c = canvas.getContext('2d');
+
+      // Background: warm beige radial gradient
+      const grad = c.createRadialGradient(W/2, H/2, 0, W/2, H/2, W * 0.72);
+      grad.addColorStop(0, '#f6f1e6');
+      grad.addColorStop(1, '#e7dcc6');
+      c.fillStyle = grad;
+      c.fillRect(0, 0, W, H);
+
+      // Border inset 28px
+      const inset = 28;
+      c.strokeStyle = '#8a6d4a';
+      c.lineWidth = 1.5;
+      c.strokeRect(inset + 0.75, inset + 0.75, W - inset * 2 - 1.5, H - inset * 2 - 1.5);
+
+      // "ShowUp" italic top
+      c.fillStyle = '#8a6d4a';
+      c.font = 'italic 30px Georgia, serif';
+      c.textAlign = 'center';
+      c.fillText('ShowUp', W / 2, 118);
+
+      // Thin rule below
+      c.strokeStyle = 'rgba(138,109,74,0.45)';
+      c.lineWidth = 1;
+      c.beginPath();
+      c.moveTo(W/2 - 44, 138); c.lineTo(W/2 + 44, 138);
+      c.stroke();
+
+      // Streak number
+      const numStr = String(streak);
+      const fontSize = numStr.length >= 3 ? 136 : 164;
+      c.fillStyle = '#4a3826';
+      c.font = `bold ${fontSize}px Georgia, serif`;
+      c.textAlign = 'center';
+      c.fillText(numStr, W / 2, 320);
+
+      // "MORNINGS SHOWN UP"
+      c.fillStyle = '#8a6d4a';
+      c.font = '19px Georgia, serif';
+      c.textAlign = 'center';
+      c.fillText('MORNINGS  SHOWN  UP', W / 2, 372);
+
+      // Rule
+      c.strokeStyle = 'rgba(138,109,74,0.40)';
+      c.lineWidth = 1;
+      c.beginPath();
+      c.moveTo(W/2 - 64, 400); c.lineTo(W/2 + 64, 400);
+      c.stroke();
+
+      // "Your daily morning routine" italic bottom
+      c.fillStyle = '#a8895f';
+      c.font = 'italic 18px Georgia, serif';
+      c.textAlign = 'center';
+      c.fillText('Your daily morning routine', W / 2, 440);
+
+      return canvas;
+    }
+
+    function showMilestoneImageModal(streak) {
+      streak = streak || _currentStreak;
+      if (!streak) return;
+
+      const canvas = renderMilestoneCanvas(streak);
+      canvas.className = 'ms-img-canvas';
+
+      const modal = document.createElement('div');
+      modal.className = 'ms-img-modal';
+
+      const card = document.createElement('div');
+      card.className = 'ms-img-card';
+
+      const actions = document.createElement('div');
+      actions.className = 'ms-img-actions';
+      actions.innerHTML = `
+        <button class="ms-img-download" onclick="downloadMilestoneImage(${streak})">↓ Save image</button>
+        <button class="ms-img-close" onclick="closeMilestoneImageModal()">Close</button>
+      `;
+
+      card.appendChild(canvas);
+      card.appendChild(actions);
+      modal.appendChild(card);
+      document.body.appendChild(modal);
+      window.__milestoneCanvas = canvas;
+    }
+
+    function closeMilestoneImageModal() {
+      const modal = document.querySelector('.ms-img-modal');
+      if (!modal) return;
+      modal.classList.add('hiding');
+      setTimeout(() => modal.remove(), 300);
+    }
+
+    function downloadMilestoneImage(streak) {
+      const canvas = window.__milestoneCanvas;
+      if (!canvas) return;
+      const link = document.createElement('a');
+      link.download = `showup-${streak}-days.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
     }
 
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
