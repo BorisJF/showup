@@ -95,7 +95,7 @@
     /* ── GREETING ── */
     .greeting {
       text-align: center;
-      font-size: 18px;
+      font-size: 22px;
       font-style: italic;
       color: var(--text);
       margin-bottom: 26px;
@@ -118,7 +118,7 @@
     }
 
     .remember-line1 {
-      font-size: 29px;
+      font-size: 35px;
       font-weight: 400;
       line-height: 1.25;
       color: var(--text);
@@ -126,7 +126,7 @@
     }
 
     .remember-line2 {
-      font-size: 31px;
+      font-size: 37px;
       font-weight: 500;
       font-style: italic;
       line-height: 1.25;
@@ -195,7 +195,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 19px;
+      font-size: 23px;
       font-weight: 600;
       font-style: normal;
       color: var(--text);
@@ -204,7 +204,7 @@
 
     .card-name {
       flex: 1;
-      font-size: 16px;
+      font-size: 19px;
       font-weight: 400;
       font-style: normal;
       color: var(--text);
@@ -259,7 +259,7 @@
       box-shadow: var(--card-shadow);
       color: var(--text);
       font-family: 'Lora', Georgia, serif;
-      font-size: 16px;
+      font-size: 19px;
       padding: 14px 16px;
       outline: none;
       resize: none;
@@ -339,7 +339,7 @@
     }
 
     .locked-value {
-      font-size: 17px;
+      font-size: 20px;
       line-height: 1.55;
       color: var(--text);
       text-wrap: pretty;
@@ -365,7 +365,7 @@
     }
 
     .message-text {
-      font-size: 17px;
+      font-size: 20px;
       font-style: italic;
       line-height: 1.62;
       color: var(--text);
@@ -397,13 +397,13 @@
     }
 
     .morning-focus {
-      font-size: 15px;
+      font-size: 18px;
       font-weight: 500;
       margin-bottom: 2px;
     }
 
     .morning-commitment {
-      font-size: 14px;
+      font-size: 17px;
       color: var(--muted);
       font-style: italic;
       line-height: 1.4;
@@ -454,13 +454,13 @@
     }
 
     .rating-context-focus {
-      font-size: 16px;
+      font-size: 19px;
       font-weight: 500;
       margin-bottom: 4px;
     }
 
     .rating-context-commitment {
-      font-size: 14px;
+      font-size: 17px;
       color: var(--muted);
       font-style: italic;
       line-height: 1.4;
@@ -692,19 +692,55 @@
       100% { opacity: 0;  transform: translate(var(--tx), var(--ty)) scale(0.1); }
     }
 
-    /* ── RESET BUTTON ── */
-    .reset-btn {
-      display: block; margin: 36px auto 0;
-      background: none; border: none;
-      color: rgba(154, 139, 123, 0.36);
+    /* ── SLIDE TO RESET ── */
+    .reset-slider {
+      margin: 34px auto 0;
+      max-width: 230px;
+    }
+    .reset-track {
+      position: relative;
+      height: 38px;
+      border-radius: 100px;
+      background: rgba(40, 32, 26, 0.035);
+      border: 1px solid rgba(40, 32, 26, 0.07);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      user-select: none;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .reset-track-label {
       font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
-      font-size: 11px; letter-spacing: 0.08em;
-      cursor: pointer; padding: 8px 16px;
-      transition: color 0.2s;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(154, 139, 123, 0.7);
+      pointer-events: none;
+      transition: opacity 0.2s, color 0.2s;
+    }
+    .reset-thumb {
+      position: absolute;
+      left: 3px; top: 3px;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: #fff;
+      border: 1px solid rgba(40, 32, 26, 0.10);
+      box-shadow: 0 1px 3px rgba(40, 32, 26, 0.12);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted);
+      font-size: 15px;
+      cursor: grab;
+      touch-action: none;
       -webkit-tap-highlight-color: transparent;
     }
-    .reset-btn:hover   { color: rgba(154, 139, 123, 0.65); }
-    .reset-btn.confirming { color: var(--amber); }
+    .reset-thumb:active { cursor: grabbing; }
+    .reset-track.armed {
+      background: var(--amber-light);
+      border-color: rgba(184, 119, 58, 0.32);
+    }
+    .reset-track.armed .reset-track-label { color: var(--amber); opacity: 0.4; }
+    .reset-track.armed .reset-thumb { color: var(--amber); border-color: rgba(184, 119, 58, 0.4); }
 
     /* ── COMMITMENT QUALITY HINT ── */
     .quality-hint {
@@ -726,7 +762,7 @@
       color: var(--amber); margin-bottom: 12px;
     }
     .offline-saved-msg {
-      font-size: 16px; font-style: italic; color: var(--muted); line-height: 1.55;
+      font-size: 19px; font-style: italic; color: var(--muted); line-height: 1.55;
     }
 
     /* ── LOADING ── */
@@ -767,32 +803,6 @@
       margin-top: 6px;
     }
 
-    /* ── WEATHER SUBLINE ────────────────────────────── */
-    .weather-subline {
-      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
-      font-size: 12px;
-      color: var(--muted);
-      text-align: center;
-      margin-top: -18px;
-      margin-bottom: 22px;
-      min-height: 16px;
-      line-height: 1.5;
-    }
-
-    .weather-btn {
-      background: none;
-      border: none;
-      color: var(--muted);
-      font-family: inherit;
-      font-size: 12px;
-      cursor: pointer;
-      padding: 0;
-      text-decoration: underline;
-      text-underline-offset: 2px;
-      opacity: 0.65;
-    }
-    .weather-btn:hover { opacity: 1; }
-
     /* ── WORD CLOUD ─────────────────────────────────── */
     .wordcloud-container {
       margin-top: 44px;
@@ -829,83 +839,6 @@
       padding: 20px 8px;
       line-height: 1.8;
       width: 100%;
-    }
-
-    /* ── MILESTONE IMAGE MODAL ──────────────────────── */
-    .ms-img-modal {
-      position: fixed;
-      inset: 0;
-      z-index: 4000;
-      background: rgba(40, 32, 26, 0.72);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px 20px;
-      animation: msiFadeIn 0.28s ease forwards;
-    }
-
-    @keyframes msiFadeIn {
-      from { opacity: 0; }
-      to   { opacity: 1; }
-    }
-
-    .ms-img-modal.hiding {
-      animation: msiFadeOut 0.28s ease forwards;
-    }
-
-    @keyframes msiFadeOut {
-      from { opacity: 1; }
-      to   { opacity: 0; }
-    }
-
-    .ms-img-card {
-      background: #fff;
-      border-radius: 20px;
-      padding: 20px;
-      max-width: 360px;
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-      box-shadow: 0 24px 64px rgba(40, 32, 26, 0.32);
-    }
-
-    .ms-img-canvas {
-      width: 100%;
-      border-radius: 10px;
-      display: block;
-    }
-
-    .ms-img-actions {
-      display: flex;
-      gap: 10px;
-      width: 100%;
-    }
-
-    .ms-img-download {
-      flex: 1;
-      background: #4a3826;
-      color: #fbf9f4;
-      border: none;
-      border-radius: 100px;
-      padding: 13px 18px;
-      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      letter-spacing: 0.03em;
-    }
-
-    .ms-img-close {
-      background: transparent;
-      border: 1.5px solid rgba(40, 32, 26, 0.18);
-      color: var(--muted);
-      border-radius: 100px;
-      padding: 13px 16px;
-      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
-      font-size: 13px;
-      cursor: pointer;
     }
 
     /* ── SPECIAL CHALLENGE ──────────────────────────── */
@@ -1016,25 +949,6 @@
       100% { opacity: 0; transform: translateY(100vh) rotate(900deg) scale(.4); }
     }
 
-    /* ── SHARE MILESTONE BUTTON ─────────────────────── */
-    .share-milestone-btn {
-      background: transparent;
-      border: none;
-      color: var(--muted);
-      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
-      font-size: 10px;
-      letter-spacing: 0.06em;
-      cursor: pointer;
-      padding: 0;
-      text-decoration: underline;
-      text-underline-offset: 2px;
-      opacity: 0.65;
-      display: block;
-      text-align: right;
-      margin-top: 5px;
-    }
-
-    .share-milestone-btn:hover { opacity: 1; }
   </style>
 </head>
 <body>
@@ -1053,16 +967,11 @@
         <span class="streak-pill-text" id="streak-pill-text">0 -day streak</span>
       </div>
       <div class="streak-milestone-line" id="streak-milestone"></div>
-      <button class="share-milestone-btn" id="share-milestone-btn" style="display:none"
-        onclick="showMilestoneImageModal()">Share milestone →</button>
     </div>
   </div>
 
   <!-- GREETING -->
   <div class="greeting" id="greeting">Good morning, Boris.</div>
-
-  <!-- WEATHER SUBLINE -->
-  <div class="weather-subline" id="weather-subline"></div>
 
   <!-- REMEMBER THIS -->
   <div class="remember-section">
@@ -1189,13 +1098,6 @@
       document.getElementById('streak-pill-text').textContent = `${s} -day streak`;
       document.getElementById('streak-milestone').textContent = getMilestone(s);
 
-      // Share milestone button — visible once streak ≥ 7
-      _currentStreak = s;
-      const shareBtn = document.getElementById('share-milestone-btn');
-      if (shareBtn) shareBtn.style.display = s >= 7 ? '' : 'none';
-
-      // Weather (only init once per session)
-      if (!_weatherInited) { _weatherInited = true; initWeather(); }
     }
 
     function renderFreshDay() {
@@ -1218,7 +1120,9 @@
           ${cards}
         </div>
         <div id="act-step"></div>
+        ${resetSliderHTML()}
       `;
+      mountResetSlider();
     }
 
     function selectCard(card) {
@@ -1291,13 +1195,9 @@
           </div>
         ` : ''}
 
-        <button class="reset-btn" id="reset-btn"
-          data-date="${esc(entry.date)}"
-          data-yesterday="${getYesterdayDate()}"
-          onclick="handleReset(this.dataset.date, this.dataset.yesterday)">
-          Reset today
-        </button>
+        ${resetSliderHTML()}
       `;
+      mountResetSlider();
     }
 
     function renderHistory(history) {
@@ -1384,7 +1284,11 @@
         <div class="rating-hint" id="rating-hint">Tap to rate</div>
 
         <button class="rating-skip" onclick="handleRatingSkip()">skip →</button>
+
+        ${resetSliderHTML()}
       `;
+
+      mountResetSlider();
 
       // State lives on a plain object (not window) to avoid leaks
       window.__ratingState = { date: yesterday.date, current: 0, timer: null };
@@ -1689,13 +1593,6 @@
               renderHeader(date, newStreak);
               renderHistory(fresh.history || []);
               if (newStreak > 0 && newStreak % 10 === 0) showMilestoneCelebration(newStreak);
-              if ([7, 30, 100].includes(newStreak)) {
-                const imgKey = `milestone-img-v1-${newStreak}`;
-                if (!localStorage.getItem(imgKey)) {
-                  localStorage.setItem(imgKey, '1');
-                  setTimeout(() => showMilestoneImageModal(newStreak), newStreak % 10 === 0 ? 1200 : 400);
-                }
-              }
               // "I am special" challenge — ~25%, once per day, after all else settles
               if (shouldShowChallenge()) {
                 setTimeout(showSpecialChallenge, 900);
@@ -1773,28 +1670,59 @@
     // RESET
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-    let _resetConfirming = false;
-    let _resetTimer      = null;
+    // Discreet slide-to-reset — rendered in every state, wired by mountResetSlider().
+    function resetSliderHTML() {
+      return `
+        <div class="reset-slider" id="reset-slider">
+          <div class="reset-track" id="reset-track">
+            <span class="reset-track-label">slide to reset today</span>
+            <div class="reset-thumb" id="reset-thumb" aria-label="Slide to reset today">›</div>
+          </div>
+        </div>`;
+    }
 
-    async function handleReset(date, yesterday) {
-      const btn = document.getElementById('reset-btn');
-      if (!btn) return;
+    function mountResetSlider() {
+      const track = document.getElementById('reset-track');
+      const thumb = document.getElementById('reset-thumb');
+      if (!track || !thumb) return;
 
-      if (!_resetConfirming) {
-        _resetConfirming = true;
-        btn.textContent = 'Tap again to confirm';
-        btn.classList.add('confirming');
-        _resetTimer = setTimeout(() => {
-          _resetConfirming = false;
-          const b = document.getElementById('reset-btn');
-          if (b) { b.textContent = 'Reset today'; b.classList.remove('confirming'); }
-        }, 3000);
-        return;
-      }
+      let dragging = false, startX = 0, maxX = 0, curX = 0;
 
-      clearTimeout(_resetTimer);
-      _resetConfirming = false;
+      const onMove = (e) => {
+        if (!dragging) return;
+        const x = e.clientX ?? (e.touches && e.touches[0].clientX) ?? 0;
+        curX = Math.max(0, Math.min(maxX, x - startX));
+        thumb.style.left = (3 + curX) + 'px';
+        track.classList.toggle('armed', curX > maxX * 0.82);
+      };
 
+      const onUp = () => {
+        if (!dragging) return;
+        dragging = false;
+        document.removeEventListener('pointermove', onMove);
+        document.removeEventListener('pointerup', onUp);
+        if (curX > maxX * 0.82) {
+          doReset();
+        } else {
+          thumb.style.left = '3px';
+          track.classList.remove('armed');
+          curX = 0;
+        }
+      };
+
+      thumb.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        dragging = true;
+        startX = e.clientX;
+        maxX = track.clientWidth - thumb.offsetWidth - 6;
+        document.addEventListener('pointermove', onMove);
+        document.addEventListener('pointerup', onUp);
+      });
+    }
+
+    async function doReset() {
+      const date      = getTodayDate();
+      const yesterday = getYesterdayDate();
       try {
         await fetch('/api/reset', {
           method: 'DELETE',
@@ -1804,7 +1732,6 @@
       } catch (err) {
         console.error('Reset error (non-fatal):', err);
       }
-
       ratingPromptHandled = false;
       loadApp();
     }
@@ -1856,6 +1783,28 @@
       if (_audioCtx.state === 'suspended') _audioCtx.resume();
       return _audioCtx;
     }
+
+    // Unlock audio on the FIRST user interaction of the session and keep the
+    // context running. Without this, sounds that fire after an async gap
+    // (the submit chime plays after /api/submit returns, milestone bells after
+    // /api/load) land outside the tap gesture and iOS/Safari silently blocks
+    // them — the "sometimes works, sometimes silent" bug.
+    function unlockAudioOnce() {
+      try {
+        const ctx = getAudioCtx();
+        // A 1-sample silent buffer fully unlocks the context on iOS Safari.
+        const buf = ctx.createBuffer(1, 1, 22050);
+        const src = ctx.createBufferSource();
+        src.buffer = buf;
+        src.connect(ctx.destination);
+        src.start(0);
+        if (ctx.state === 'suspended') ctx.resume();
+      } catch {}
+      ['pointerdown', 'touchstart', 'mousedown', 'keydown'].forEach(ev =>
+        document.removeEventListener(ev, unlockAudioOnce, true));
+    }
+    ['pointerdown', 'touchstart', 'mousedown', 'keydown'].forEach(ev =>
+      document.addEventListener(ev, unlockAudioOnce, { capture: true, passive: true }));
 
     // Core tone primitive: frequency, volume, duration, wave type, start delay
     function tone(freq, vol = 0.5, dur = 1.0, type = 'sine', start = 0) {
@@ -2177,97 +2126,6 @@
     }
 
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    // WEATHER
-    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-    const WX_CACHE_KEY = 'showup-weather-v1';
-    const WX_TTL = 30 * 60 * 1000; // 30 minutes
-    let _weatherInited = false;
-
-    const WMO_DESC = {
-      0:'Clear sky', 1:'Mainly clear', 2:'Partly cloudy', 3:'Overcast',
-      45:'Foggy', 48:'Foggy',
-      51:'Light drizzle', 53:'Drizzle', 55:'Heavy drizzle',
-      61:'Light rain', 63:'Rainy', 65:'Heavy rain',
-      71:'Light snow', 73:'Snowy', 75:'Heavy snow',
-      80:'Light showers', 81:'Showers', 82:'Heavy showers',
-      85:'Snow showers', 86:'Snow showers',
-      95:'Thunderstorm', 96:'Thunderstorm', 99:'Thunderstorm',
-    };
-
-    function getCachedWeather() {
-      try {
-        const raw = localStorage.getItem(WX_CACHE_KEY);
-        if (!raw) return null;
-        const { ts, data } = JSON.parse(raw);
-        if (Date.now() - ts < WX_TTL) return data;
-      } catch {}
-      return null;
-    }
-
-    function setCachedWeather(data) {
-      try {
-        localStorage.setItem(WX_CACHE_KEY, JSON.stringify({ ts: Date.now(), data }));
-      } catch {}
-    }
-
-    function showWeatherSubline(text) {
-      const el = document.getElementById('weather-subline');
-      if (el) el.textContent = text;
-    }
-
-    async function fetchAndShowWeather(lat, lon) {
-      try {
-        const [wxRes, geoRes] = await Promise.all([
-          fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weathercode&hourly=precipitation_probability&forecast_days=1&timezone=auto`),
-          fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`),
-        ]);
-        if (!wxRes.ok) return;
-        const wx = await wxRes.json();
-        const geo = geoRes.ok ? await geoRes.json() : null;
-
-        const temp = Math.round(wx.current.temperature_2m);
-        const code = wx.current.weathercode;
-        const cond = WMO_DESC[code] || 'Clear sky';
-        const city = geo?.address?.city || geo?.address?.town || geo?.address?.village || geo?.address?.county || '';
-
-        // Afternoon rain: average precipitation_probability for hours 12–17
-        const pp = wx.hourly?.precipitation_probability || [];
-        const avgPP = pp.slice(12, 18).reduce((a, b) => a + b, 0) / (pp.slice(12, 18).length || 1);
-        const rainNote = avgPP > 40 ? ' Rain likely this afternoon.' : '';
-
-        const cityPart = city ? ` in ${city}` : '';
-        const text = `${cond}${cityPart}, ${temp}°C.${rainNote}`;
-
-        setCachedWeather({ text });
-        showWeatherSubline(text);
-      } catch {}
-    }
-
-    function initWeather() {
-      const el = document.getElementById('weather-subline');
-      if (!el) return;
-
-      // Show cached data immediately if fresh
-      const cached = getCachedWeather();
-      if (cached) { showWeatherSubline(cached.text); return; }
-
-      // Show button to request geolocation (required for iOS PWA first-time)
-      if (!navigator.geolocation) return;
-      const btn = document.createElement('button');
-      btn.className = 'weather-btn';
-      btn.textContent = 'Get local weather';
-      btn.onclick = () => {
-        btn.remove();
-        navigator.geolocation.getCurrentPosition(
-          pos => fetchAndShowWeather(pos.coords.latitude, pos.coords.longitude),
-          () => {} // permission denied — stay silent
-        );
-      };
-      el.appendChild(btn);
-    }
-
-    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     // WORD CLOUD
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -2344,117 +2202,6 @@
       } catch {
         section.style.display = 'none';
       }
-    }
-
-    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    // MILESTONE IMAGE
-    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-    let _currentStreak = 0;
-
-    function renderMilestoneCanvas(streak) {
-      const W = 540, H = 540;
-      const canvas = document.createElement('canvas');
-      canvas.width = W; canvas.height = H;
-      const c = canvas.getContext('2d');
-
-      // Background: warm beige radial gradient
-      const grad = c.createRadialGradient(W/2, H/2, 0, W/2, H/2, W * 0.72);
-      grad.addColorStop(0, '#f6f1e6');
-      grad.addColorStop(1, '#e7dcc6');
-      c.fillStyle = grad;
-      c.fillRect(0, 0, W, H);
-
-      // Border inset 28px
-      const inset = 28;
-      c.strokeStyle = '#8a6d4a';
-      c.lineWidth = 1.5;
-      c.strokeRect(inset + 0.75, inset + 0.75, W - inset * 2 - 1.5, H - inset * 2 - 1.5);
-
-      // "ShowUp" italic top
-      c.fillStyle = '#8a6d4a';
-      c.font = 'italic 30px Georgia, serif';
-      c.textAlign = 'center';
-      c.fillText('ShowUp', W / 2, 118);
-
-      // Thin rule below
-      c.strokeStyle = 'rgba(138,109,74,0.45)';
-      c.lineWidth = 1;
-      c.beginPath();
-      c.moveTo(W/2 - 44, 138); c.lineTo(W/2 + 44, 138);
-      c.stroke();
-
-      // Streak number
-      const numStr = String(streak);
-      const fontSize = numStr.length >= 3 ? 136 : 164;
-      c.fillStyle = '#4a3826';
-      c.font = `bold ${fontSize}px Georgia, serif`;
-      c.textAlign = 'center';
-      c.fillText(numStr, W / 2, 320);
-
-      // "MORNINGS SHOWN UP"
-      c.fillStyle = '#8a6d4a';
-      c.font = '19px Georgia, serif';
-      c.textAlign = 'center';
-      c.fillText('MORNINGS  SHOWN  UP', W / 2, 372);
-
-      // Rule
-      c.strokeStyle = 'rgba(138,109,74,0.40)';
-      c.lineWidth = 1;
-      c.beginPath();
-      c.moveTo(W/2 - 64, 400); c.lineTo(W/2 + 64, 400);
-      c.stroke();
-
-      // "Your daily morning routine" italic bottom
-      c.fillStyle = '#a8895f';
-      c.font = 'italic 18px Georgia, serif';
-      c.textAlign = 'center';
-      c.fillText('Your daily morning routine', W / 2, 440);
-
-      return canvas;
-    }
-
-    function showMilestoneImageModal(streak) {
-      streak = streak || _currentStreak;
-      if (!streak) return;
-
-      const canvas = renderMilestoneCanvas(streak);
-      canvas.className = 'ms-img-canvas';
-
-      const modal = document.createElement('div');
-      modal.className = 'ms-img-modal';
-
-      const card = document.createElement('div');
-      card.className = 'ms-img-card';
-
-      const actions = document.createElement('div');
-      actions.className = 'ms-img-actions';
-      actions.innerHTML = `
-        <button class="ms-img-download" onclick="downloadMilestoneImage(${streak})">↓ Save image</button>
-        <button class="ms-img-close" onclick="closeMilestoneImageModal()">Close</button>
-      `;
-
-      card.appendChild(canvas);
-      card.appendChild(actions);
-      modal.appendChild(card);
-      document.body.appendChild(modal);
-      window.__milestoneCanvas = canvas;
-    }
-
-    function closeMilestoneImageModal() {
-      const modal = document.querySelector('.ms-img-modal');
-      if (!modal) return;
-      modal.classList.add('hiding');
-      setTimeout(() => modal.remove(), 300);
-    }
-
-    function downloadMilestoneImage(streak) {
-      const canvas = window.__milestoneCanvas;
-      if (!canvas) return;
-      const link = document.createElement('a');
-      link.download = `showup-${streak}-days.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
     }
 
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

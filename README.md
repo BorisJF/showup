@@ -1,11 +1,20 @@
 # Show Up — Project README
 
 **What this is.** Show Up is a personal daily morning check-in app built for one user: Boris.
-Every morning, you open the app, choose one focus principle from your personal list (things like
-"Hold their gaze" or "Use this moment to act"), write a short commitment — one sentence about
-what that principle means for your day — and hit Submit. The app responds with a short,
-AI-generated message personalised to what you wrote, and tracks how many consecutive days
-you've shown up. That's it. Simple by design.
+It runs on a simple framework — **SHOWUP and ACT**. Every morning you pick one of six SHOWUP
+focuses for the day, then write one small, concrete thing you'll do to act on it:
+
+- **S** — Smile and be nice
+- **H** — Hold their gaze
+- **O** — Own it, you can fix it
+- **W** — Watch who you're around
+- **U** — You, too, deserve kindness
+- **P** — Present is where you need to be
+- **A** — Act today — the mandatory second step: one specific action that enacts your chosen focus
+
+You choose a focus, write your act as a short "when ___, I'll ___" line, and hit **Show Up!**.
+The app responds with a short, AI-generated message personalised to what you wrote, and tracks
+how many consecutive days you've shown up. That's it. Simple by design.
 
 **Current features (beyond the core check-in):**
 
@@ -34,11 +43,12 @@ behind the scenes:
    The function queries the database and returns: whether you've already submitted today,
    your current streak count, and your last 7 entries.
 
-3. **You see one of two screens.** If you haven't submitted today, you see the focus
-   selection and commitment form. If you have, you see today's locked entry and the
-   AI-generated message.
+3. **You see one of two screens.** If you haven't submitted today, you see the SHOWUP focus
+   list. Pick one and it collapses to your chosen focus (with an "or change" option), then a
+   single **Act today** field appears, pre-filled with a focus-specific "when ___, I'll ___"
+   prompt. If you've already submitted, you see today's locked entry and the AI-generated message.
 
-4. **You submit.** When you choose a focus and write your commitment and hit the button,
+4. **You submit.** When you choose a focus, write your act, and hit **Show Up!**,
    the app calls `/api/submit`. That function saves your entry to the database, then makes
    one call to Claude (Anthropic's AI) to generate a personalised one-sentence message in
    one of four modes: Inspiration, Provocation, Reflection, or Connection. The mode is
@@ -74,6 +84,7 @@ at the root that need to be there for technical reasons.
 ShowUp/
 │
 ├── README.md               ← You are reading this
+├── deploy.sh               ← Commits, pushes, and deploys in one step (./deploy.sh)
 ├── netlify.toml            ← Netlify build configuration (must stay at root)
 ├── .gitignore              ← Tells git which files to ignore (must stay at root)
 ├── .claude/                ← Claude Code settings (must stay at root)
@@ -173,9 +184,23 @@ Deploying means publishing your latest code changes so they go live at
 **boris-showup.netlify.app**. The app will not update just because you changed a file
 on your computer — you have to deploy explicitly.
 
+The easiest way is the **`deploy.sh`** script in the project root. It commits any changes,
+pushes them to GitHub, then deploys to Netlify — so the live site and GitHub never drift apart:
+
 ```bash
-cd ~/Documents/Claude/Projects/ShowUp/app
-netlify deploy --prod
+cd ~/Documents/Claude/Projects/ShowUp
+./deploy.sh                 # auto commit message with date + time
+./deploy.sh "what changed"  # custom commit message
+```
+
+If there's nothing to commit it skips straight to deploying. If the push fails it stops before
+deploying, so you never publish code that isn't backed up on GitHub.
+
+To deploy manually without the script:
+
+```bash
+cd ~/Documents/Claude/Projects/ShowUp
+netlify deploy --prod --dir=app
 ```
 
 The build takes about 15–30 seconds. When you see **"Production deploy is live"**, the
@@ -276,4 +301,4 @@ it runs the next time Cowork is opened.
 
 ---
 
-*Last updated: June 7, 2026*
+*Last updated: June 11, 2026*
