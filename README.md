@@ -18,9 +18,9 @@ how many consecutive days you've shown up. That's it. Simple by design.
 
 **Current features (beyond the core check-in):**
 
-- **Weather-aware greeting** — on first visit, a tap fetches local weather via the browser's geolocation API and the Open-Meteo API (no key needed). Shows a plain factual subline like *"Partly cloudy in Paris, 18°C. Rain likely this afternoon."* Cached in localStorage for 30 minutes.
 - **Word cloud** — after 10 entries, a "Your words" section appears beneath Recent Mornings. It pulls all past commitment texts, strips stop words, counts frequency, and renders up to 45 words in Georgia serif scaled 14–54px across six warm brown/beige tones. Rendered with a client-side flex layout; no external library.
-- **Milestone image** — at day 7, 30, and 100, a shareable 540×540 PNG card is generated client-side via the Canvas API and offered for download. Available on demand any time via a "Share milestone →" button next to the streak count (shown once streak ≥ 7). Contains zero entry content — just the day number, "MORNINGS SHOWN UP", and the app name.
+- **Slide to reset** — a discreet "slide to reset today" control is present in every state (focus picker, act entry, committed view, and the rating screen). Drag the thumb most of the way across to delete today's entry and start over; a short drag springs back. Replaces the old tap-to-confirm reset.
+- **Milestone celebration** — at every 10-day mark, a brief particle celebration plays over the committed view, with a short carillon sound. (There is no shareable milestone image — that feature was removed.)
 - **"I am special" tap challenge** — a surprise post-submission interstitial that fires on approximately 25% of submissions. See full description below.
 
 **Where it lives.** The app runs at **https://boris-showup.netlify.app** and is hosted entirely
@@ -301,4 +301,4 @@ it runs the next time Cowork is opened.
 
 ---
 
-*Last updated: June 11, 2026*
+*Last updated: June 15, 2026*
