@@ -1078,17 +1078,12 @@
 
     /* ── DISCREET STYLE TOGGLE (bottom centre, both themes) ── */
     #style-toggle {
-      position: fixed;
-      left: 50%;
-      bottom: 16px;
-      transform: translateX(-50%);
-      z-index: 9000;
-      display: inline-flex;
+      display: flex;
       align-items: center;
       gap: 7px;
-      background: rgba(255, 255, 255, 0.82);
-      -webkit-backdrop-filter: blur(6px);
-      backdrop-filter: blur(6px);
+      width: max-content;
+      margin: 44px auto 4px;
+      background: transparent;
       border: 1px solid rgba(40, 32, 26, 0.16);
       border-radius: 100px;
       padding: 6px 13px;
@@ -1097,7 +1092,7 @@
       letter-spacing: 0.06em;
       color: var(--muted);
       cursor: pointer;
-      opacity: 0.5;
+      opacity: 0.6;
       transition: opacity 0.18s, border-color 0.18s, color 0.18s;
     }
     #style-toggle:hover { opacity: 1; color: var(--text); }
@@ -1122,11 +1117,6 @@
   </style>
 </head>
 <body>
-
-  <!-- DISCREET STYLE TOGGLE -->
-  <button id="style-toggle" type="button" aria-label="Switch visual style" onclick="toggleStyle()">
-    <span class="st-dot"></span><span id="style-toggle-label">Papier Tigre</span>
-  </button>
 
   <!-- SPLASH SCREEN -->
   <div id="splash">
@@ -1183,6 +1173,11 @@
       <div class="cloud-empty">Loading…</div>
     </div>
   </div>
+
+  <!-- STYLE TOGGLE — sits at the foot of the page (not sticky) -->
+  <button id="style-toggle" type="button" aria-label="Switch visual style" onclick="toggleStyle()">
+    <span class="st-dot"></span><span id="style-toggle-label">Papier Tigre</span>
+  </button>
 
 
   <script>

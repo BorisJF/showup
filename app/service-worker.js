@@ -9,7 +9,7 @@
  * to force clients to fetch the new shell.
  */
 
-const CACHE_NAME = 'showup-shell-v17';
+const CACHE_NAME = 'showup-shell-v18';
 
 const SHELL = [
   '/',
@@ -50,7 +50,28 @@ self.addEventListener('fetch', event => {
   // Never cache API calls — always go to network
   if (url.pathname.startsWith('/api/')) return;
 
-  // Cache-first for everything else
+  // Network-first for the HTML shell so new deploys appear on a normal reload
+  // (falls back to cache when offline). This avoids stale pages / hard refreshes.
+  const isHTML = request.mode === 'navigate' ||
+                 url.pathname === '/' ||
+                 url.pathname === '/index.html';
+
+  if (isHTML) {
+    event.respondWith(
+      fetch(request).then(response => {
+        if (response.ok) {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put('/index.html', clone));
+        }
+        return response;
+      }).catch(() =>
+        caches.match(request).then(c => c || caches.match('/index.html'))
+      )
+    );
+    return;
+  }
+
+  // Cache-first for everything else (images, fonts, etc.)
   event.respondWith(
     caches.match(request).then(cached => {
       if (cached) return cached;
