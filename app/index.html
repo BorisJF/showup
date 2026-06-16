@@ -834,6 +834,9 @@
 
     .cloud-word:hover { transform: scale(1.12); }
 
+    /* word colours by class so the theme can recolour them (default = warm browns) */
+    .cw-0{color:#6b4f3a}.cw-1{color:#8a6d4a}.cw-2{color:#a8895f}.cw-3{color:#4a3826}.cw-4{color:#7d6444}.cw-5{color:#9c7a52}
+
     .cloud-empty {
       font-family: Georgia, 'Times New Roman', serif;
       font-style: italic;
@@ -954,22 +957,41 @@
     }
 
     /* ════════════════════════════════════════════════════════════
-       PAPIER TIGRE THEME  —  active only when <html data-theme="papier">
-       Non-destructive: the original warm-serif design is the default.
-       Most of the skin works by redefining the existing CSS variables.
+       PAPIER TIGRE THEME · "Holographique"
+       Active only when <html data-theme="papier">. Non-destructive —
+       the original warm-serif design remains the default.
+       White base, iridescent hero, pink offset-shadow buttons.
        ════════════════════════════════════════════════════════════ */
     html[data-theme="papier"] {
-      --bg:          #eef0f1;   /* cool Parisian paper */
+      --bg:          #ffffff;   /* clean white paper */
       --text:        #161616;   /* ink */
       --muted:       #6c6f72;
-      --amber:       #e2473c;   /* tiger red accent */
-      --amber-light: rgba(226, 71, 60, 0.10);
+      --amber:       #161616;   /* accents go editorial-black; colour lives in the hero */
+      --amber-light: rgba(22, 22, 22, 0.06);
       --card:        #ffffff;
       --card-border: rgba(22, 22, 22, 0.16);
       --card-shadow: 0 2px 0 0 rgba(22, 22, 22, 0.05);
-      --badge-bg:    #c5d4e0;   /* powder blue */
+      --badge-bg:    #c5d4e0;   /* powder blue (fallback) */
       --rule-color:  #161616;   /* sharp black rules */
+      --pt-holo: linear-gradient(160deg,
+        #7e83c0 0%, #a987b0 11%, #c98fa4 21%, #d9c1d2 34%,
+        #f0ebdd 50%, #e7ecda 62%, #bfe0ce 76%, #a6d9c2 90%, #bcdcd6 100%);
+      --pt-pink: #e2a0b0;
     }
+
+    /* ── HERO PANEL ── groups greeting + "remember this" on the gradient.
+       In the default theme .pt-hero is display:contents (invisible wrapper). */
+    .pt-hero { display: contents; }
+    html[data-theme="papier"] .pt-hero {
+      display: block;
+      background: var(--pt-holo);
+      border-radius: 16px;
+      padding: 22px 18px 26px;
+      margin-bottom: 30px;
+    }
+    html[data-theme="papier"] .pt-hero .greeting         { margin-bottom: 18px; }
+    html[data-theme="papier"] .pt-hero .remember-section { margin-bottom: 0; }
+    html[data-theme="papier"] .pt-hero .remember-rule    { display: none; }
 
     /* Grotesque type in place of the serif */
     html[data-theme="papier"] body,
@@ -984,10 +1006,11 @@
 
     /* Heavy editorial headlines, no italics */
     html[data-theme="papier"] .greeting {
-      font-style: normal; font-weight: 800; letter-spacing: -0.02em;
+      font-style: normal; font-weight: 700; letter-spacing: -0.01em;
     }
+    html[data-theme="papier"] .remember-label { color: var(--text); }
     html[data-theme="papier"] .remember-line1 { font-weight: 700; letter-spacing: -0.02em; }
-    html[data-theme="papier"] .remember-line2 { font-style: normal; font-weight: 900; letter-spacing: -0.02em; }
+    html[data-theme="papier"] .remember-line2 { font-style: normal; font-weight: 900; letter-spacing: -0.02em; color: var(--text); }
 
     /* Uppercase grotesque labels */
     html[data-theme="papier"] .section-label,
@@ -1002,23 +1025,31 @@
     /* Sharper, flatter surfaces */
     html[data-theme="papier"] .focus-card  { border-radius: 4px; border-width: 1.5px; }
     html[data-theme="papier"] textarea      { border-radius: 4px; }
-    html[data-theme="papier"] .letter-badge { border-radius: 4px; }
+    html[data-theme="papier"] .letter-badge {
+      border-radius: 4px;
+      background: linear-gradient(150deg, #c1a9cf, #d9c1d2 45%, #aeddc6);
+      color: #161616;
+    }
     html[data-theme="papier"] .remember-rule { border-radius: 0; height: 3px; }
     html[data-theme="papier"] .streak-pill {
       border: 1.5px solid var(--text);
-      box-shadow: 3px 3px 0 0 var(--amber);
+      box-shadow: 3px 3px 0 0 var(--pt-pink);
     }
 
-    /* Signature offset-shadow primary button */
+    /* Signature offset-shadow primary button — white, black border, pink offset */
     html[data-theme="papier"] .commit-btn {
       font-family: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
       font-weight: 800;
+      background: #ffffff;
+      color: #161616;
+      border: 2px solid #161616;
       border-radius: 2px;
-      box-shadow: 5px 5px 0 0 var(--amber);
+      box-shadow: 5px 5px 0 0 var(--pt-pink);
       transition: transform 0.12s, box-shadow 0.12s, opacity 0.12s;
     }
-    html[data-theme="papier"] .commit-btn:hover   { opacity: 1; transform: translate(-1px,-1px); box-shadow: 6px 6px 0 0 var(--amber); }
-    html[data-theme="papier"] .commit-btn:active  { opacity: 1; transform: translate(2px,2px);   box-shadow: 2px 2px 0 0 var(--amber); }
+    html[data-theme="papier"] .commit-btn:hover    { opacity: 1; transform: translate(-1px,-1px); box-shadow: 6px 6px 0 0 var(--pt-pink); }
+    html[data-theme="papier"] .commit-btn:active   { opacity: 1; transform: translate(2px,2px);   box-shadow: 2px 2px 0 0 var(--pt-pink); }
+    html[data-theme="papier"] .commit-btn:disabled { box-shadow: 3px 3px 0 0 rgba(22,22,22,0.12); }
 
     /* Outline "change" button, squared */
     html[data-theme="papier"] .change-btn {
@@ -1029,6 +1060,21 @@
       text-transform: uppercase;
       letter-spacing: 0.1em;
     }
+
+    /* Word cloud — clean white panel, grotesque words in the iridescent palette */
+    html[data-theme="papier"] .wordcloud-bg {
+      background: #ffffff;
+      border: 1.5px solid rgba(22, 22, 22, 0.16);
+      border-radius: 4px;
+    }
+    html[data-theme="papier"] .cloud-word  { font-family: 'Archivo', 'Helvetica Neue', Arial, sans-serif; font-weight: 600; }
+    html[data-theme="papier"] .cloud-empty { font-family: 'Archivo', 'Helvetica Neue', Arial, sans-serif; font-style: normal; color: var(--muted); }
+    html[data-theme="papier"] .cw-0 { color: #161616; }
+    html[data-theme="papier"] .cw-1 { color: #5d5fa0; }
+    html[data-theme="papier"] .cw-2 { color: #b15a78; }
+    html[data-theme="papier"] .cw-3 { color: #3f8f74; }
+    html[data-theme="papier"] .cw-4 { color: #8f5668; }
+    html[data-theme="papier"] .cw-5 { color: #6c6f72; }
 
     /* ── DISCREET STYLE TOGGLE (bottom centre, both themes) ── */
     #style-toggle {
@@ -1068,7 +1114,10 @@
       color: var(--text);
       opacity: 0.7;
     }
-    html[data-theme="papier"] #style-toggle .st-dot { border-radius: 0; }
+    html[data-theme="papier"] #style-toggle .st-dot {
+      border-radius: 0;
+      background: linear-gradient(150deg, #c1a9cf, #aeddc6);
+    }
 
   </style>
 </head>
@@ -1096,15 +1145,18 @@
     </div>
   </div>
 
-  <!-- GREETING -->
-  <div class="greeting" id="greeting">Good morning, Boris.</div>
+  <!-- HERO (greeting + remember) — wrapper is invisible unless the Papier Tigre skin is on -->
+  <div class="pt-hero">
+    <!-- GREETING -->
+    <div class="greeting" id="greeting">Good morning, Boris.</div>
 
-  <!-- REMEMBER THIS -->
-  <div class="remember-section">
-    <div class="remember-label">Remember this</div>
-    <div class="remember-line1" id="remember-line1"></div>
-    <div class="remember-line2" id="remember-line2"></div>
-    <div class="remember-rule"></div>
+    <!-- REMEMBER THIS -->
+    <div class="remember-section">
+      <div class="remember-label">Remember this</div>
+      <div class="remember-line1" id="remember-line1"></div>
+      <div class="remember-line2" id="remember-line2"></div>
+      <div class="remember-rule"></div>
+    </div>
   </div>
 
   <!-- TODAY'S CHECK-IN (fresh or committed state) -->
@@ -2318,11 +2370,10 @@
         shuffled.forEach(([word, count], idx) => {
           const t = (count - minFreq) / range;        // 0..1
           const size  = Math.round(14 + t * 40);      // 14px..54px
-          const color = CLOUD_COLORS[idx % CLOUD_COLORS.length];
           const span  = document.createElement('span');
-          span.className = 'cloud-word';
+          span.className = 'cloud-word cw-' + (idx % 6);
           span.textContent = word;
-          span.style.cssText = `font-size:${size}px;color:${color};`;
+          span.style.cssText = `font-size:${size}px;`;
           bg.appendChild(span);
         });
       } catch {
