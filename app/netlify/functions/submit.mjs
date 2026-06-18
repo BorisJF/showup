@@ -53,7 +53,7 @@ export default async (req) => {
     return Response.json({ error: 'Invalid JSON body.' }, { status: 400 });
   }
 
-  const { date, focus, commitment } = body;
+  const { date, focus, commitment, lang } = body;
 
   if (!date || !focus || !commitment) {
     return Response.json(
@@ -92,7 +92,7 @@ export default async (req) => {
   const mode = MODES[Math.floor(Math.random() * MODES.length)];
 
   // 3. Call Claude for the daily message (graceful fallback if API fails)
-  let dailyMessage = 'Keep going.';
+  let dailyMessage = (lang === 'fr') ? 'Continue.' : 'Keep going.';
   try {
     const apiKey = process.env.ANTHROPIC_API_KEY;
     if (apiKey) {
@@ -106,7 +106,10 @@ export default async (req) => {
         body: JSON.stringify({
           model:      'claude-haiku-4-5-20251001',
           max_tokens: 100,
-          system:     MODE_SYSTEM_PROMPTS[mode],
+          system:     MODE_SYSTEM_PROMPTS[mode]
+            + (lang === 'fr'
+                ? ' Write your entire response in French, addressing the user informally with "tu" (tutoiement).'
+                : ''),
           messages: [{
             role:    'user',
             content: `My focus today: ${focus}\nMy commitment: ${commitment}`,

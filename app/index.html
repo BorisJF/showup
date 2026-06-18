@@ -324,6 +324,24 @@
     .change-btn:hover  { border-color: rgba(40, 32, 26, 0.18); color: var(--text); }
     .change-btn:active { opacity: 0.7; }
 
+    /* ── LANGUAGE FOOTER (discreet, under the reset slider) ── */
+    .lang-footer {
+      text-align: center;
+      margin-top: 16px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+    }
+    .lang-footer .lf {
+      cursor: pointer;
+      color: rgba(154, 139, 123, 0.5);
+      transition: color 0.18s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .lang-footer .lf:hover { color: var(--muted); }
+    .lang-footer .lf.on { color: var(--text); }
+    .lang-footer .lf-sep { color: rgba(154, 139, 123, 0.35); margin: 0 8px; }
+
     /* ── ACT LABEL ACCENT ── */
     .act-letter {
       color: var(--amber);
@@ -1142,7 +1160,7 @@
 
     <!-- REMEMBER THIS -->
     <div class="remember-section">
-      <div class="remember-label">Remember this</div>
+      <div class="remember-label" id="remember-label">Remember this</div>
       <div class="remember-line1" id="remember-line1"></div>
       <div class="remember-line2" id="remember-line2"></div>
       <div class="remember-rule"></div>
@@ -1156,7 +1174,7 @@
 
   <!-- RECENT MORNINGS -->
   <div class="section-header-row" style="margin-top: 48px;">
-    <span class="section-label">Recent mornings</span>
+    <span class="section-label" id="recent-label">Recent mornings</span>
     <div class="section-line"></div>
   </div>
   <div id="history-section">
@@ -1166,7 +1184,7 @@
   <!-- WORD CLOUD -->
   <div class="wordcloud-container" id="wordcloud-section" style="display:none">
     <div class="section-header-row">
-      <span class="section-label">Your words</span>
+      <span class="section-label" id="words-label">Your words</span>
       <div class="section-line"></div>
     </div>
     <div class="wordcloud-bg" id="wordcloud-bg">
@@ -1185,25 +1203,162 @@
     // CONTENT
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-    const PRINCIPLES = [
-      { letter: 'S', name: 'Smile and be nice',              act: "When I pass someone, I'll smile first" },
-      { letter: 'H', name: 'Hold their gaze',                act: "When we talk, I'll really look at them" },
-      { letter: 'O', name: 'Own it, you can fix it',         act: "When I slip, I'll own it out loud" },
-      { letter: 'W', name: "Watch who you're around",        act: "Today I'll lean toward the people who lift me by…" },
-      { letter: 'U', name: 'You, too, deserve kindness',     act: "Today I'll be kind to myself by…" },
-      { letter: 'P', name: 'Present is where you need to be', act: "When I catch myself drifting, I'll…" },
-    ];
+    // ── i18n: language state + dictionary (EN / FR) ──────────────────────────
+    let lang = localStorage.getItem('showup-lang')
+      || (((navigator.language || '').toLowerCase().startsWith('fr')) ? 'fr' : 'en');
 
-    // Daily affirmations for "Remember this" — rotate by date
-    const AFFIRMATIONS = [
-      { line1: 'You have a superpower:',            line2: 'making people feel special.' },
-      { line1: 'Your instincts have earned their keep:', line2: 'trust them today.' },
-      { line1: 'The room changes when you walk in:', line2: 'show up fully.' },
-      { line1: "You've been through harder things:", line2: 'you already know how.' },
-      { line1: 'The work you do quietly',            line2: 'matters more than you think.' },
-      { line1: 'Your presence is a gift —',          line2: "don't forget to give it." },
-      { line1: "You don't need all the answers.",    line2: 'You need the next step.' },
-    ];
+    const I18N = {
+      en: {
+        locale: 'en-US',
+        greetMorning: 'Good morning, Boris.',
+        greetAfternoon: 'Good afternoon, Boris.',
+        greetEvening: 'Good evening, Boris.',
+        rememberLabel: 'Remember this',
+        streak: n => `${n} -day streak`,
+        mark7: '7-day mark', mark30: '30-day mark', mark100: '100-day mark',
+        recentMornings: 'Recent mornings',
+        yourWords: 'Your words',
+        loading: 'Loading…',
+        cloudWait: 'Keep showing up —<br>your word cloud is on its way.',
+        emptyHistory: 'Your committed mornings will gather here.',
+        showUpOneWay: 'Show up one way today',
+        todayShowingUp: "Today you're showing up",
+        orChange: 'or change',
+        actToday: 'Act today',
+        showUp: 'Show Up!',
+        showingUp: 'Showing up…',
+        todaysFocus: "Today's focus",
+        todaysAct: "Today's act",
+        howYesterday: 'How did yesterday go?',
+        tapToRate: 'Tap to rate',
+        skip: 'skip →',
+        slideReset: 'slide to reset today',
+        errFocus: 'Please choose a focus for today.',
+        errAct: "Add how you'll act on it today before showing up.",
+        errGeneric: 'Something went wrong — please try again.',
+        errConnect: 'Could not connect — please refresh.',
+        offlineLabel: 'Saved offline',
+        offlineMsg: "Your commitment is saved.<br>It'll submit when you reconnect.",
+        quality: { vague: 'vague', specific: 'specific', exceptional: 'exceptional' },
+        modes: { inspiration: 'Inspiration', provocation: 'Provocation', reflection: 'Reflection', connection: 'Connection' },
+        ratingHints: ['Hold to rate', "I barely tried…", 'Made some effort', 'Good showing', 'Showed up well', 'Like a rock star! ⭐'],
+        milestoneDay: 'Day',
+        milestoneTapContinue: 'tap to continue',
+        milestones: {
+          10: "Ten mornings of choosing yourself.", 20: "Twenty days. The habit is real.",
+          30: "A full month of showing up.", 40: "Forty mornings. Still here.",
+          50: "Halfway to a hundred.", 60: "Two months. You're building something.",
+          70: "Seventy days. Keep going.", 80: "Eighty mornings. Almost there.",
+          90: "Ninety days. One last push.", 100: "One hundred days. This is who you are now.",
+        },
+        sp: {
+          eyebrow: 'Just for today ✦',
+          heading: 'Something a little different awaits.',
+          sub: 'This only comes around now and then.',
+          quote: '"I am going to prevail<br>because I am special."',
+          notToday: 'Not today →',
+          timesTapped: 'times tapped',
+          youDidIt: 'You did it',
+          times: 'times',
+          resultMsg: "You're truly special.<br><strong>Go and prove it.</strong>",
+          continue: 'Continue →',
+        },
+        principles: [
+          { letter: 'S', name: 'Smile and be nice',              act: "When I pass someone, I'll smile first" },
+          { letter: 'H', name: 'Hold their gaze',                act: "When we talk, I'll really look at them" },
+          { letter: 'O', name: 'Own it, you can fix it',         act: "When I slip, I'll own it out loud" },
+          { letter: 'W', name: "Watch who you're around",        act: "Today I'll lean toward the people who lift me by…" },
+          { letter: 'U', name: 'You, too, deserve kindness',     act: "Today I'll be kind to myself by…" },
+          { letter: 'P', name: 'Present is where you need to be', act: "When I catch myself drifting, I'll…" },
+        ],
+        affirmations: [
+          { line1: 'You have a superpower:',                 line2: 'making people feel special.' },
+          { line1: 'Your instincts have earned their keep:', line2: 'trust them today.' },
+          { line1: 'The room changes when you walk in:',     line2: 'show up fully.' },
+          { line1: "You've been through harder things:",     line2: 'you already know how.' },
+          { line1: 'The work you do quietly',                line2: 'matters more than you think.' },
+          { line1: 'Your presence is a gift —',              line2: "don't forget to give it." },
+          { line1: "You don't need all the answers.",        line2: 'You need the next step.' },
+        ],
+      },
+      fr: {
+        locale: 'fr-FR',
+        greetMorning: 'Bonjour, Boris.',
+        greetAfternoon: 'Bon après-midi, Boris.',
+        greetEvening: 'Bonsoir, Boris.',
+        rememberLabel: 'À retenir',
+        streak: n => `série de ${n} jour${n > 1 ? 's' : ''}`,
+        mark7: 'cap des 7 jours', mark30: 'cap des 30 jours', mark100: 'cap des 100 jours',
+        recentMornings: 'Tes derniers matins',
+        yourWords: 'Tes mots',
+        loading: 'Chargement…',
+        cloudWait: 'Continue à te révéler —<br>ton nuage de mots arrive.',
+        emptyHistory: 'Tes matins se rassembleront ici.',
+        showUpOneWay: 'Révèle-toi aujourd’hui',
+        todayShowingUp: 'Aujourd’hui, tu te concentres sur :',
+        orChange: 'ou change',
+        actToday: 'Agis aujourd’hui',
+        showUp: 'C’est parti !',
+        showingUp: 'En cours…',
+        todaysFocus: 'L’intention du jour',
+        todaysAct: 'Le geste du jour',
+        howYesterday: 'Hier, ça s’est passé comment ?',
+        tapToRate: 'Clique pour noter',
+        skip: 'passer →',
+        slideReset: 'glisser pour réinitialiser',
+        errFocus: 'Choisis d’abord une façon de te révéler.',
+        errAct: 'Dis comment tu vas agir aujourd’hui pour te révéler.',
+        errGeneric: 'Une erreur s’est produite — réessaie.',
+        errConnect: 'Connexion impossible — actualise la page.',
+        offlineLabel: 'Tout est sauvegardé',
+        offlineMsg: 'C’est enregistré.<br>Ça partira dès que tu seras reconnecté.',
+        quality: { vague: 'flou', specific: 'précis', exceptional: 'exceptionnel' },
+        modes: { inspiration: 'Inspiration', provocation: 'Provocation', reflection: 'Réflexion', connection: 'Connexion' },
+        ratingHints: ['Maintiens pour noter', 'J’ai à peine essayé…', 'Un peu d’effort', 'Bien joué', 'Bravo', 'Je suis une rock star ! ⭐'],
+        milestoneDay: 'Jour',
+        milestoneTapContinue: 'touche pour continuer',
+        milestones: {
+          10: 'Dix jours pour te révéler.', 20: 'Vingt jours. Tu as créé une habitude.',
+          30: 'Un mois entier !', 40: 'Quarante matins. Et tu es toujours là.',
+          50: 'À mi-chemin des cent !', 60: 'Deux mois. Tu as construit quelque chose.',
+          70: 'Soixante-dix jours. Continue.', 80: 'Quatre-vingts jours. Tu y es presque !',
+          90: 'Quatre-vingt-dix jours. Un dernier effort.', 100: 'Cent jours. Tu t’es révélé !',
+        },
+        sp: {
+          eyebrow: 'Juste aujourd’hui ✦',
+          heading: 'Quelque chose d’un peu différent t’attend.',
+          sub: 'Ça n’arrive pas tous les jours.',
+          quote: '« Je vais réussir<br>parce que je suis quelqu’un d’unique. »',
+          notToday: 'Pas aujourd’hui →',
+          timesTapped: 'clics',
+          youDidIt: 'Tu l’as fait',
+          times: 'fois',
+          resultMsg: 'Tu es vraiment unique.<br><strong>Va le prouver.</strong>',
+          continue: 'Continuer →',
+        },
+        principles: [
+          { letter: 'S', name: 'Sois gentil et souriant',          act: 'Quand je croise quelqu’un, je souris en premier' },
+          { letter: 'H', name: 'Regarde les gens dans les yeux',   act: 'Quand on se parle, je les regarde vraiment' },
+          { letter: 'O', name: 'Tu peux régler la situation',      act: 'Quand je dérape, je l’assume à voix haute' },
+          { letter: 'W', name: 'Choisis de qui tu t’entoures', act: 'Aujourd’hui, je me rapproche des gens qui m’élèvent en…' },
+          { letter: 'U', name: 'Tu mérites de la douceur et de l’amour', act: 'Aujourd’hui, je suis généreux avec moi-même en…' },
+          { letter: 'P', name: 'Vis au présent',                   act: 'Quand je me disperse, je…' },
+        ],
+        affirmations: [
+          { line1: 'Tu as un super-pouvoir :',                 line2: 'faire sentir aux autres qu’ils sont uniques.' },
+          { line1: 'Ton instinct a fait ses preuves :',        line2: 'fais-lui confiance aujourd’hui.' },
+          { line1: 'Tu transformes la pièce en y entrant :',   line2: 'sois pleinement présent.' },
+          { line1: 'Tu as traversé bien pire :',               line2: 'tu sais comment t’en sortir.' },
+          { line1: 'Ce que tu fais en silence',                line2: 'compte plus que tu ne le crois.' },
+          { line1: 'Ta simple présence est un cadeau —',       line2: 'n’oublie pas de l’offrir.' },
+          { line1: 'Tu n’as pas besoin de toutes les réponses.', line2: 'Juste du prochain pas.' },
+        ],
+      },
+    };
+
+    function t(k) { return I18N[lang][k]; }
+    function PRIN() { return I18N[lang].principles; }
+    function AFF()  { return I18N[lang].affirmations; }
 
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     // DATE UTILS
@@ -1229,28 +1384,37 @@
     function formatDate(dateStr) {
       const [y, m, d] = dateStr.split('-').map(Number);
       const dt = new Date(y, m - 1, d);
-      return dt.toLocaleDateString('en-US', {
+      return dt.toLocaleDateString(I18N[lang].locale, {
         weekday: 'long', month: 'long', day: 'numeric'
       }).toUpperCase();
     }
 
     function getGreeting() {
       const h = new Date().getHours();
-      if (h >= 4 && h < 12) return 'Good morning, Boris.';
-      if (h >= 12 && h < 18) return 'Good afternoon, Boris.';
-      return 'Good evening, Boris.';
+      if (h >= 4 && h < 12) return t('greetMorning');
+      if (h >= 12 && h < 18) return t('greetAfternoon');
+      return t('greetEvening');
     }
 
     function getDailyAffirmation(dateStr) {
       const seed = dateStr.replace(/-/g, '').split('').reduce((a, c) => a + c.charCodeAt(0), 0);
-      return AFFIRMATIONS[seed % AFFIRMATIONS.length];
+      return AFF()[seed % AFF().length];
     }
 
     function getMilestone(streak) {
-      if (streak >= 100) return '✦  100-day mark';
-      if (streak >= 30)  return '◆  30-day mark';
-      if (streak >= 7)   return '◇  7-day mark';
+      if (streak >= 100) return '✦  ' + t('mark100');
+      if (streak >= 30)  return '◆  ' + t('mark30');
+      if (streak >= 7)   return '◇  ' + t('mark7');
       return '';
+    }
+
+    // Apply language to the static labels that live in the HTML shell
+    function applyStaticLabels() {
+      document.documentElement.lang = lang;
+      const set = (id, txt) => { const e = document.getElementById(id); if (e) e.textContent = txt; };
+      set('remember-label', t('rememberLabel'));
+      set('recent-label', t('recentMornings'));
+      set('words-label', t('yourWords'));
     }
 
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -1268,7 +1432,7 @@
 
       // Streak
       const s = (streak !== null && streak !== undefined) ? streak : 0;
-      document.getElementById('streak-pill-text').textContent = `${s} -day streak`;
+      document.getElementById('streak-pill-text').textContent = t('streak')(s);
       document.getElementById('streak-milestone').textContent = getMilestone(s);
 
     }
@@ -1276,7 +1440,7 @@
     function renderFreshDay() {
       selectedFocus = null;
 
-      const cards = PRINCIPLES.map((p, i) => `
+      const cards = PRIN().map((p, i) => `
         <div class="focus-card" data-idx="${i}" onclick="selectCard(this)">
           <div class="letter-badge">${p.letter}</div>
           <div class="card-name">${esc(p.name)}</div>
@@ -1287,7 +1451,7 @@
       document.getElementById('checkin-section').innerHTML = `
         <div id="focus-step">
           <div class="section-header-row">
-            <span class="section-label">Show up one way today</span>
+            <span class="section-label">${esc(t('showUpOneWay'))}</span>
             <div class="section-line"></div>
           </div>
           ${cards}
@@ -1299,12 +1463,12 @@
     }
 
     function selectCard(card) {
-      const p = PRINCIPLES[+card.dataset.idx];
+      const p = PRIN()[+card.dataset.idx];
       selectedFocus = p.name;
 
       document.getElementById('focus-step').innerHTML = `
         <div class="section-header-row">
-          <span class="section-label">Today you're showing up</span>
+          <span class="section-label">${esc(t('todayShowingUp'))}</span>
           <div class="section-line"></div>
         </div>
         <div class="focus-card selected" style="cursor:default">
@@ -1312,13 +1476,13 @@
           <div class="card-name">${esc(p.name)}</div>
           <div class="radio-circle"></div>
         </div>
-        <button class="change-btn" onclick="renderFreshDay()">or change</button>
+        <button class="change-btn" onclick="renderFreshDay()">${esc(t('orChange'))}</button>
       `;
 
       document.getElementById('act-step').innerHTML = `
         <div class="commitment-group">
           <label class="field-label" for="commitment-input">
-            <span class="act-letter">A</span>&nbsp;Act today
+            <span class="act-letter">A</span>&nbsp;${esc(t('actToday'))}
           </label>
           <textarea
             id="commitment-input"
@@ -1330,7 +1494,7 @@
         </div>
 
         <button class="commit-btn" id="commit-btn" onclick="handleCommit()">
-          Show Up!
+          ${esc(t('showUp'))}
         </button>
         <div class="error-msg" id="error-msg" style="display:none"></div>
       `;
@@ -1341,12 +1505,12 @@
 
     function renderCommittedDay(entry) {
       const mode = entry.message_mode
-        ? entry.message_mode.charAt(0).toUpperCase() + entry.message_mode.slice(1)
+        ? (I18N[lang].modes[entry.message_mode] || (entry.message_mode.charAt(0).toUpperCase() + entry.message_mode.slice(1)))
         : 'Message';
 
       document.getElementById('checkin-section').innerHTML = `
         <div class="section-header-row">
-          <span class="section-label">Today's focus</span>
+          <span class="section-label">${esc(t('todaysFocus'))}</span>
           <div class="section-line"></div>
         </div>
         <div class="locked-field">
@@ -1354,7 +1518,7 @@
         </div>
 
         <div class="section-header-row" style="margin-top:20px">
-          <span class="section-label">Today's act</span>
+          <span class="section-label">${esc(t('todaysAct'))}</span>
           <div class="section-line"></div>
         </div>
         <div class="locked-field">
@@ -1376,7 +1540,7 @@
     function renderHistory(history) {
       const el = document.getElementById('history-section');
       if (!history || history.length === 0) {
-        el.innerHTML = '<div class="empty-state">Your committed mornings will gather here.</div>';
+        el.innerHTML = `<div class="empty-state">${esc(t('emptyHistory'))}</div>`;
         return;
       }
       el.innerHTML = history.map(e => {
@@ -1406,15 +1570,6 @@
 
     const RATING_CIRCUMFERENCE = 2 * Math.PI * 100; // radius 100 inside 220px button
 
-    const RATING_HINTS = [
-      'Hold to rate',
-      "I barely tried…",
-      'Made some effort',
-      'Good showing',
-      'Showed up well',
-      'Like a rock star! ⭐'
-    ];
-
     const RATING_COLORS = [
       'rgba(184,119,58,0)',
       'rgba(184,119,58,0.30)',
@@ -1427,7 +1582,7 @@
     function renderRatingScreen(yesterday) {
       document.getElementById('checkin-section').innerHTML = `
         <div class="section-header-row">
-          <span class="section-label">How did yesterday go?</span>
+          <span class="section-label">${esc(t('howYesterday'))}</span>
           <div class="section-line"></div>
         </div>
 
@@ -1454,9 +1609,9 @@
           </button>
         </div>
 
-        <div class="rating-hint" id="rating-hint">Tap to rate</div>
+        <div class="rating-hint" id="rating-hint">${esc(t('tapToRate'))}</div>
 
-        <button class="rating-skip" onclick="handleRatingSkip()">skip →</button>
+        <button class="rating-skip" onclick="handleRatingSkip()">${esc(t('skip'))}</button>
 
         ${resetSliderHTML()}
       `;
@@ -1494,7 +1649,7 @@
         const numEl  = document.getElementById('rating-number');
         const hintEl = document.getElementById('rating-hint');
         if (numEl)  numEl.textContent  = rating;
-        if (hintEl) hintEl.textContent = RATING_HINTS[rating] || '';
+        if (hintEl) hintEl.textContent = t('ratingHints')[rating] || '';
 
         // Play tick for each new step (steps 1-4; step 5 gets the arpeggio)
         playSoundRatingTick(rating);
@@ -1556,6 +1711,8 @@
       try {
         const res = await fetch(`/api/load?date=${date}`);
         const data = res.ok ? await res.json() : {};
+        _lastData = data;
+        applyStaticLabels();
         renderHeader(date, data.streak ?? 0);
         renderHistory(data.history || []);
         if (data.today) renderCommittedDay(data.today);
@@ -1570,6 +1727,7 @@
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
     let selectedFocus = null;
+    let _lastData = null;
 
     function hideSplash() {
       const splash = document.getElementById('splash');
@@ -1585,12 +1743,12 @@
       const pendingDraft = localStorage.getItem('showup-draft');
       if (pendingDraft && navigator.onLine) {
         try {
-          const { date: dd, focus: df, commitment: dc } = JSON.parse(pendingDraft);
+          const { date: dd, focus: df, commitment: dc, lang: dl } = JSON.parse(pendingDraft);
           localStorage.removeItem('showup-draft');
           await fetch('/api/submit', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ date: dd, focus: df, commitment: dc }),
+            body: JSON.stringify({ date: dd, focus: df, commitment: dc, lang: dl || 'en' }),
           });
         } catch {}
       }
@@ -1606,50 +1764,50 @@
         ]);
 
         hideSplash();
-        renderHeader(date, data.streak ?? 0);
-        renderHistory(data.history || []);
-        loadWordCloud(data.totalCount ?? 0);
-
-        // Show rating prompt if yesterday has an unrated entry (once per session)
-        if (!ratingPromptHandled) {
-          const yesterday = getYesterdayDate();
-          const yesterdayEntry = (data.history || []).find(e => e.date === yesterday);
-          if (yesterdayEntry && yesterdayEntry.rating == null) {
-            renderRatingScreen(yesterdayEntry);
-            return;
-          }
-        }
-
-        if (data.today) {
-          renderCommittedDay(data.today);
-        } else {
-          renderFreshDay();
-        }
+        _lastData = data;
+        renderFromData(date, data);
       } catch (err) {
         console.error('Load error:', err);
         hideSplash();
         document.getElementById('checkin-section').innerHTML =
-          '<div class="error-msg">Could not connect — please refresh.</div>';
+          `<div class="error-msg">${esc(t('errConnect'))}</div>`;
         document.getElementById('history-section').innerHTML = '';
       }
+    }
+
+    // Render all views from a loaded data payload (used by loadApp and setLang)
+    function renderFromData(date, data) {
+      applyStaticLabels();
+      renderHeader(date, data.streak ?? 0);
+      renderHistory(data.history || []);
+      loadWordCloud(data.totalCount ?? 0);
+
+      // Show rating prompt if yesterday has an unrated entry (once per session)
+      if (!ratingPromptHandled) {
+        const yesterday = getYesterdayDate();
+        const yesterdayEntry = (data.history || []).find(e => e.date === yesterday);
+        if (yesterdayEntry && yesterdayEntry.rating == null) {
+          renderRatingScreen(yesterdayEntry);
+          return;
+        }
+      }
+
+      if (data.today) renderCommittedDay(data.today);
+      else renderFreshDay();
+    }
+
+    // Switch language: persist + re-render from cached data (no refetch, no splash)
+    function setLang(l) {
+      if (l === lang) return;
+      lang = l;
+      try { localStorage.setItem('showup-lang', l); } catch {}
+      if (_lastData) renderFromData(getTodayDate(), _lastData);
+      else loadApp();
     }
 
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     // MILESTONE CELEBRATION
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-    const MILESTONE_MESSAGES = {
-      10:  "Ten mornings of choosing yourself.",
-      20:  "Twenty days. The habit is real.",
-      30:  "A full month of showing up.",
-      40:  "Forty mornings. Still here.",
-      50:  "Halfway to a hundred.",
-      60:  "Two months. You're building something.",
-      70:  "Seventy days. Keep going.",
-      80:  "Eighty mornings. Almost there.",
-      90:  "Ninety days. One last push.",
-      100: "One hundred days. This is who you are now.",
-    };
 
     function showMilestoneCelebration(streak) {
       playSoundMilestone();
@@ -1658,15 +1816,15 @@
       if (localStorage.getItem(key)) return;
       localStorage.setItem(key, '1');
 
-      const msg = MILESTONE_MESSAGES[streak] || `${streak} days of showing up.`;
+      const msg = t('milestones')[streak] || `${streak}`;
 
       const overlay = document.createElement('div');
       overlay.className = 'milestone-overlay';
       overlay.innerHTML = `
-        <div class="milestone-day-label">Day</div>
+        <div class="milestone-day-label">${esc(t('milestoneDay'))}</div>
         <div class="milestone-number">${streak}</div>
         <div class="milestone-message">${esc(msg)}</div>
-        <div class="milestone-dismiss">tap to continue</div>
+        <div class="milestone-dismiss">${esc(t('milestoneTapContinue'))}</div>
       `;
 
       // Floating particles
@@ -1721,36 +1879,36 @@
       const btn        = document.getElementById('commit-btn');
 
       if (!focus) {
-        errorEl.textContent = 'Please choose a focus for today.';
+        errorEl.textContent = t('errFocus');
         errorEl.style.display = 'block';
         return;
       }
       if (!commitment) {
-        errorEl.textContent = 'Add how you’ll act on it today before showing up.';
+        errorEl.textContent = t('errAct');
         errorEl.style.display = 'block';
         return;
       }
 
       // ── Offline draft ──────────────────────────────────────────────────────
       if (!navigator.onLine) {
-        localStorage.setItem('showup-draft', JSON.stringify({ date, focus, commitment }));
+        localStorage.setItem('showup-draft', JSON.stringify({ date, focus, commitment, lang }));
         document.getElementById('checkin-section').innerHTML = `
           <div class="offline-saved">
-            <div class="offline-saved-label">Saved offline</div>
-            <div class="offline-saved-msg">Your commitment is saved.<br>It'll submit when you reconnect.</div>
+            <div class="offline-saved-label">${esc(t('offlineLabel'))}</div>
+            <div class="offline-saved-msg">${t('offlineMsg')}</div>
           </div>`;
         return;
       }
 
       btn.disabled = true;
-      btn.textContent = 'Showing up…';
+      btn.textContent = t('showingUp');
       errorEl.style.display = 'none';
 
       try {
         const res = await fetch('/api/submit', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ date, focus, commitment }),
+          body: JSON.stringify({ date, focus, commitment, lang }),
         });
 
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -1777,8 +1935,8 @@
       } catch (err) {
         console.error('Submit error:', err);
         btn.disabled = false;
-        btn.textContent = 'Show Up!';
-        errorEl.textContent = 'Something went wrong — please try again.';
+        btn.textContent = t('showUp');
+        errorEl.textContent = t('errGeneric');
         errorEl.style.display = 'block';
       }
     }
@@ -1848,9 +2006,14 @@
       return `
         <div class="reset-slider" id="reset-slider">
           <div class="reset-track" id="reset-track">
-            <span class="reset-track-label">slide to reset today</span>
-            <div class="reset-thumb" id="reset-thumb" aria-label="Slide to reset today">›</div>
+            <span class="reset-track-label">${esc(t('slideReset'))}</span>
+            <div class="reset-thumb" id="reset-thumb" aria-label="${esc(t('slideReset'))}">›</div>
           </div>
+        </div>
+        <div class="lang-footer">
+          <span class="lf${lang === 'en' ? ' on' : ''}" onclick="setLang('en')">English</span>
+          <span class="lf-sep">·</span>
+          <span class="lf${lang === 'fr' ? ' on' : ''}" onclick="setLang('fr')">Français</span>
         </div>`;
     }
 
@@ -1935,7 +2098,7 @@
           const { quality } = await res.json();
           const el = document.getElementById('quality-hint');
           if (el && quality) {
-            el.textContent = quality;
+            el.textContent = (I18N[lang].quality[quality] || quality);
             el.className = `quality-hint quality-${quality} visible`;
           }
         } catch {}
@@ -2104,8 +2267,6 @@
     // SPECIAL CHALLENGE  ("I am special")
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-    const SP_QUOTE = '"I am going to prevail<br>because I am special."';
-
     function shouldShowChallenge() {
       const key = `showup-challenge-${getTodayDate()}`;
       if (localStorage.getItem(key)) return false;   // already shown today
@@ -2121,28 +2282,29 @@
 
     function showSpecialChallenge() {
       try {
+        const sp = I18N[lang].sp;
         const overlay = document.createElement('div');
         overlay.className = 'sp-overlay';
         overlay.innerHTML = `
           <div class="sp-card">
             <div class="sp-phase on" id="sp-offer">
-              <div class="sp-eyebrow">Just for today ✦</div>
-              <div class="sp-heading">Something a little different awaits.</div>
-              <div class="sp-sub">This only comes around now and then.</div>
-              <button class="sp-big-btn" id="sp-accept">${SP_QUOTE}</button>
-              <button class="sp-skip" id="sp-skip">Not today →</button>
+              <div class="sp-eyebrow">${sp.eyebrow}</div>
+              <div class="sp-heading">${sp.heading}</div>
+              <div class="sp-sub">${sp.sub}</div>
+              <button class="sp-big-btn" id="sp-accept">${sp.quote}</button>
+              <button class="sp-skip" id="sp-skip">${sp.notToday}</button>
             </div>
             <div class="sp-phase" id="sp-game">
-              <div class="sp-tap-label">times tapped</div>
+              <div class="sp-tap-label">${sp.timesTapped}</div>
               <span class="sp-tap-count" id="sp-cnt">0</span>
-              <button class="sp-tap-btn" id="sp-tap">${SP_QUOTE}</button>
+              <button class="sp-tap-btn" id="sp-tap">${sp.quote}</button>
             </div>
             <div class="sp-phase" id="sp-result">
-              <div class="sp-eyebrow">You did it</div>
+              <div class="sp-eyebrow">${sp.youDidIt}</div>
               <span class="sp-result-score" id="sp-final">0</span>
-              <div class="sp-result-unit">times</div>
-              <div class="sp-result-msg">You're truly special.<br><strong>Go and prove it.</strong></div>
-              <button class="sp-done-btn" id="sp-done">Continue →</button>
+              <div class="sp-result-unit">${sp.times}</div>
+              <div class="sp-result-msg">${sp.resultMsg}</div>
+              <button class="sp-done-btn" id="sp-done">${sp.continue}</button>
             </div>
           </div>`;
         document.body.appendChild(overlay);
@@ -2309,6 +2471,14 @@
       'had','has','been','were','are','they','their','there','about','would','when',
       'what','get','got','did','make','made','one','our','day','today','time','very',
       'will','then','than','its','also','like','im','ive','ill','dont','wont',
+      // French stop words
+      'les','des','une','aux','que','qui','pas','par','pour','dans','sur','avec',
+      'est','sont','suis','être','etre','plus','mais','ses','son','sa',' tes','tes',
+      'ton','ta','mon','ma','mes','nos','vos','leur','leurs','aux','ces','cette',
+      'cet','elle','ils','elles','nous','vous','tout','tous','toute','toutes',
+      'jour','aujourd','hui','quand','vais','fait','faire','suis','vraiment',
+      'moi','toi','soi','même','meme','quelque','chose','très','tres','bien',
+      'depuis','encore','aussi','déjà','deja','sans','sous','entre','vers',
     ]);
 
     const CLOUD_COLORS = ['#6b4f3a','#8a6d4a','#a8895f','#4a3826','#7d6444','#9c7a52'];
@@ -2322,7 +2492,7 @@
         if (totalCount > 0) {
           section.style.display = '';
           document.getElementById('wordcloud-bg').innerHTML =
-            '<div class="cloud-empty">Keep showing up —<br>your word cloud is on its way.</div>';
+            `<div class="cloud-empty">${t('cloudWait')}</div>`;
         }
         return;
       }
