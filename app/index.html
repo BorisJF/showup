@@ -324,23 +324,32 @@
     .change-btn:hover  { border-color: rgba(40, 32, 26, 0.18); color: var(--text); }
     .change-btn:active { opacity: 0.7; }
 
-    /* ── LANGUAGE FOOTER (discreet, under the reset slider) ── */
-    .lang-footer {
-      text-align: center;
-      margin-top: 16px;
-      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
-      font-size: 11px;
-      letter-spacing: 0.06em;
+    /* ── LANGUAGE FLAGS (very top) ── */
+    #lang-flags {
+      display: flex;
+      justify-content: flex-end;
+      gap: 9px;
+      margin-bottom: 8px;
     }
-    .lang-footer .lf {
+    .flag-btn {
+      background: none;
+      border: none;
+      padding: 0;
+      line-height: 0;
       cursor: pointer;
-      color: rgba(154, 139, 123, 0.5);
-      transition: color 0.18s;
+      border-radius: 3px;
+      opacity: 0.3;
+      filter: grayscale(0.6);
+      transition: opacity 0.18s, filter 0.18s, box-shadow 0.18s;
       -webkit-tap-highlight-color: transparent;
     }
-    .lang-footer .lf:hover { color: var(--muted); }
-    .lang-footer .lf.on { color: var(--text); }
-    .lang-footer .lf-sep { color: rgba(154, 139, 123, 0.35); margin: 0 8px; }
+    .flag-btn:hover { opacity: 0.7; filter: grayscale(0.2); }
+    .flag-btn.on {
+      opacity: 1;
+      filter: none;
+      box-shadow: 0 0 0 1.5px var(--card-border);
+    }
+    .flag-btn svg { display: block; border-radius: 3px; }
 
     /* ── ACT LABEL ACCENT ── */
     .act-letter {
@@ -492,7 +501,7 @@
     .rating-btn-wrap {
       display: flex;
       justify-content: center;
-      margin-bottom: 14px;
+      margin-bottom: 26px;
     }
 
     .rating-tap-btn {
@@ -533,25 +542,35 @@
       transition: stroke-dashoffset 0.25s ease, stroke 0.25s ease;
     }
 
-    .rating-number {
-      font-family: 'Lora', Georgia, serif;
-      font-size: 68px;
-      font-weight: 500;
-      color: var(--text);
+    .rating-inner {
       position: relative;
       z-index: 1;
-      transition: color 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 0 30px;
       pointer-events: none;
+    }
+
+    .rating-number {
+      font-family: 'Lora', Georgia, serif;
+      font-size: 58px;
+      font-weight: 500;
+      line-height: 1;
+      color: var(--text);
+      transition: color 0.2s;
     }
 
     .rating-hint {
       text-align: center;
       font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
-      font-size: 13px;
+      font-size: 12px;
+      line-height: 1.3;
       color: var(--muted);
       font-style: italic;
-      min-height: 20px;
-      margin-bottom: 22px;
+      max-width: 150px;
       transition: opacity 0.2s;
     }
 
@@ -843,17 +862,22 @@
     }
 
     .cloud-word {
-      font-family: Georgia, 'Times New Roman', serif;
+      font-family: 'Lora', Georgia, 'Times New Roman', serif;
       cursor: default;
-      line-height: 1.2;
+      line-height: 1.1;
       display: inline-block;
+      padding: 5px 13px;
+      border-radius: 20px;
+      background: #ecdac6;
+      color: #4a3826;
+      border: 1px solid rgba(74, 56, 38, 0.10);
       transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
-    .cloud-word:hover { transform: scale(1.12); }
+    .cloud-word:hover { transform: scale(1.08) rotate(-1.5deg); }
 
-    /* word colours by class so the theme can recolour them (default = warm browns) */
-    .cw-0{color:#6b4f3a}.cw-1{color:#8a6d4a}.cw-2{color:#a8895f}.cw-3{color:#4a3826}.cw-4{color:#7d6444}.cw-5{color:#9c7a52}
+    /* warm pill tints by class (theme overrides recolour them into stickers) */
+    .cw-0{background:#e7d3bd}.cw-1{background:#ecdac6}.cw-2{background:#e3cdb2}.cw-3{background:#efe0cb}.cw-4{background:#e9d6bf}.cw-5{background:#f3e8d6}
 
     .cloud-empty {
       font-family: Georgia, 'Times New Roman', serif;
@@ -1079,20 +1103,44 @@
       letter-spacing: 0.1em;
     }
 
+    /* Rating circle — white face, black ring + ink digits */
+    html[data-theme="papier"] .rating-tap-btn {
+      background: #ffffff;
+      box-shadow: inset 0 0 0 2px var(--text);
+    }
+    html[data-theme="papier"] .rating-ring-bg   { stroke: rgba(22, 22, 22, 0.10); }
+    html[data-theme="papier"] .rating-ring-fill { stroke: #161616; }
+    html[data-theme="papier"] .rating-number {
+      font-family: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
+      font-weight: 700;
+    }
+
     /* Word cloud — clean white panel, grotesque words in the iridescent palette */
     html[data-theme="papier"] .wordcloud-bg {
       background: #ffffff;
       border: 1.5px solid rgba(22, 22, 22, 0.16);
       border-radius: 4px;
     }
-    html[data-theme="papier"] .cloud-word  { font-family: 'Archivo', 'Helvetica Neue', Arial, sans-serif; font-weight: 600; }
+    html[data-theme="papier"] .cloud-word {
+      font-family: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
+      font-weight: 700;
+      border-radius: 4px;
+      border: 2px solid #161616;
+      box-shadow: 3px 3px 0 0 #161616;
+      padding: 4px 11px;
+      color: #fff;
+    }
+    html[data-theme="papier"] .cloud-word:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 5px 5px 0 0 #161616;
+    }
     html[data-theme="papier"] .cloud-empty { font-family: 'Archivo', 'Helvetica Neue', Arial, sans-serif; font-style: normal; color: var(--muted); }
-    html[data-theme="papier"] .cw-0 { color: #161616; }
-    html[data-theme="papier"] .cw-1 { color: #5d5fa0; }
-    html[data-theme="papier"] .cw-2 { color: #b15a78; }
-    html[data-theme="papier"] .cw-3 { color: #3f8f74; }
-    html[data-theme="papier"] .cw-4 { color: #8f5668; }
-    html[data-theme="papier"] .cw-5 { color: #6c6f72; }
+    html[data-theme="papier"] .cw-0 { background: #161616; color: #fff; }
+    html[data-theme="papier"] .cw-1 { background: #5d5fa0; color: #fff; }
+    html[data-theme="papier"] .cw-2 { background: #b15a78; color: #fff; }
+    html[data-theme="papier"] .cw-3 { background: #ffffff; color: #161616; }
+    html[data-theme="papier"] .cw-4 { background: #3f8f74; color: #fff; }
+    html[data-theme="papier"] .cw-5 { background: #8f5668; color: #fff; }
 
     /* ── DISCREET STYLE TOGGLE (bottom centre, both themes) ── */
     #style-toggle {
@@ -1139,6 +1187,29 @@
   <!-- SPLASH SCREEN -->
   <div id="splash">
     <img id="sp-logo" src="/logo.png" alt="">
+  </div>
+
+  <!-- LANGUAGE FLAGS (very top) -->
+  <div id="lang-flags">
+    <button class="flag-btn" id="flag-en" type="button" aria-label="English" onclick="setLang('en')">
+      <svg viewBox="0 0 24 16" width="24" height="16" aria-hidden="true">
+        <rect width="24" height="16" rx="2" fill="#fff"/>
+        <g>
+          <rect width="24" height="16" rx="2" fill="#b22234"/>
+          <rect y="2.46" width="24" height="2.46" fill="#fff"/>
+          <rect y="7.38" width="24" height="2.46" fill="#fff"/>
+          <rect y="12.3" width="24" height="2.46" fill="#fff"/>
+          <rect width="11" height="8.6" fill="#3c3b6e"/>
+        </g>
+      </svg>
+    </button>
+    <button class="flag-btn" id="flag-fr" type="button" aria-label="Français" onclick="setLang('fr')">
+      <svg viewBox="0 0 24 16" width="24" height="16" aria-hidden="true">
+        <rect width="24" height="16" rx="2" fill="#fff"/>
+        <rect width="8" height="16" fill="#0055a4"/>
+        <rect x="16" width="8" height="16" fill="#ef4135"/>
+      </svg>
+    </button>
   </div>
 
   <!-- HEADER: date + streak pill -->
@@ -1415,6 +1486,10 @@
       set('remember-label', t('rememberLabel'));
       set('recent-label', t('recentMornings'));
       set('words-label', t('yourWords'));
+      const fe = document.getElementById('flag-en');
+      const ff = document.getElementById('flag-fr');
+      if (fe) fe.classList.toggle('on', lang === 'en');
+      if (ff) ff.classList.toggle('on', lang === 'fr');
     }
 
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -1605,11 +1680,12 @@
                 stroke-dasharray="${RATING_CIRCUMFERENCE.toFixed(2)}"
                 stroke-dashoffset="${RATING_CIRCUMFERENCE.toFixed(2)}"/>
             </svg>
-            <span class="rating-number" id="rating-number">0</span>
+            <div class="rating-inner">
+              <span class="rating-number" id="rating-number">0</span>
+              <span class="rating-hint" id="rating-hint">${esc(t('tapToRate'))}</span>
+            </div>
           </button>
         </div>
-
-        <div class="rating-hint" id="rating-hint">${esc(t('tapToRate'))}</div>
 
         <button class="rating-skip" onclick="handleRatingSkip()">${esc(t('skip'))}</button>
 
@@ -2009,11 +2085,6 @@
             <span class="reset-track-label">${esc(t('slideReset'))}</span>
             <div class="reset-thumb" id="reset-thumb" aria-label="${esc(t('slideReset'))}">›</div>
           </div>
-        </div>
-        <div class="lang-footer">
-          <span class="lf${lang === 'en' ? ' on' : ''}" onclick="setLang('en')">English</span>
-          <span class="lf-sep">·</span>
-          <span class="lf${lang === 'fr' ? ' on' : ''}" onclick="setLang('fr')">Français</span>
         </div>`;
     }
 
@@ -2534,7 +2605,7 @@
         bg.innerHTML = '';
         shuffled.forEach(([word, count], idx) => {
           const t = (count - minFreq) / range;        // 0..1
-          const size  = Math.round(14 + t * 40);      // 14px..54px
+          const size  = Math.round(14 + t * 26);      // 14px..40px (chip-friendly)
           const span  = document.createElement('span');
           span.className = 'cloud-word cw-' + (idx % 6);
           span.textContent = word;
