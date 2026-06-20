@@ -703,13 +703,15 @@
     /* ── SPLASH SCREEN ── */
     #splash {
       position: fixed; inset: 0;
-      background: #fdf9f5;
+      background: #fdf9f5; /* matches the standard logo's cream background */
       display: flex;
       align-items: center; justify-content: center;
       z-index: 3000;
       transition: opacity 0.75s cubic-bezier(0.4, 0, 0.2, 1);
     }
     #splash.hidden { opacity: 0; pointer-events: none; }
+    /* Papier Tigre uses the holographic logo, whose background is pure white */
+    html[data-theme="papier"] #splash { background: #ffffff; }
 
     #sp-logo {
       width: min(62vw, 240px);
