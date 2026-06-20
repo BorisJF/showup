@@ -1186,7 +1186,16 @@
 
   <!-- SPLASH SCREEN -->
   <div id="splash">
-    <img id="sp-logo" src="/logo.png" alt="">
+    <img id="sp-logo" alt="">
+    <script>
+      // Papier Tigre uses the holographic logo; default theme uses the standard logo.
+      // data-theme is already set by the head script, so this picks the right one with no flash.
+      (function () {
+        var papier = document.documentElement.getAttribute('data-theme') === 'papier';
+        var el = document.getElementById('sp-logo');
+        if (el) el.src = papier ? '/logo-holographique-exact.png' : '/logo.png';
+      })();
+    </script>
   </div>
 
   <!-- LANGUAGE FLAGS (very top) -->
