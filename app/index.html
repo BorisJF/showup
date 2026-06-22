@@ -699,6 +699,16 @@
       from { clip-path: circle(150% at 50% 50%); }
       to   { clip-path: circle(0% at 50% 50%); }
     }
+    /* Papier Tigre recolours the bloom hot pink (#FF5DA2); the default
+       warm-serif theme keeps its brown wash. */
+    html[data-theme="papier"] .bloom-overlay {
+      background: radial-gradient(
+        circle at 50% 50%,
+        rgba(255, 93, 162, 0.92) 0%,
+        rgba(255, 93, 162, 0.78) 42%,
+        rgba(255, 122, 178, 0.46) 100%
+      );
+    }
 
     /* ── SPLASH SCREEN ── */
     #splash {
@@ -999,6 +1009,83 @@
       0%   { opacity: 1; transform: translateY(-10px) rotate(0deg) scale(1); }
       100% { opacity: 0; transform: translateY(100vh) rotate(900deg) scale(.4); }
     }
+
+    /* ── SPECIAL CHALLENGE · Papier Tigre sticker restyle ──
+       Bold flat colours, hard black borders, offset shadows, Archivo.
+       Default warm-serif game is untouched. */
+    html[data-theme="papier"] .sp-overlay { background: rgba(22, 22, 22, 0.55); }
+    html[data-theme="papier"] .sp-card {
+      background: #ffffff; border: 3px solid #161616; border-radius: 22px;
+      box-shadow: 8px 8px 0 #161616;
+      font-family: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
+    }
+    html[data-theme="papier"] .sp-eyebrow,
+    html[data-theme="papier"] .sp-tap-label,
+    html[data-theme="papier"] .sp-result-unit {
+      font-family: 'Archivo', sans-serif; font-weight: 700;
+      color: #161616; letter-spacing: .12em;
+    }
+    html[data-theme="papier"] .sp-heading {
+      font-family: 'Archivo', sans-serif; font-weight: 900; color: #161616;
+    }
+    html[data-theme="papier"] .sp-sub {
+      font-family: 'Archivo', sans-serif; font-style: normal;
+      font-weight: 500; color: #6c6f72;
+    }
+    html[data-theme="papier"] .sp-big-btn {
+      background: #FF4B3E; color: #fdf9f5;
+      font-family: 'Archivo', sans-serif; font-weight: 900;
+      border: 3px solid #161616; border-radius: 14px;
+      box-shadow: 5px 5px 0 #161616;
+      transition: transform .12s, box-shadow .12s;
+    }
+    html[data-theme="papier"] .sp-big-btn:hover {
+      background: #FF4B3E; transform: translate(-1px,-1px);
+      box-shadow: 6px 6px 0 #161616;
+    }
+    html[data-theme="papier"] .sp-big-btn:active {
+      transform: translate(2px,2px); box-shadow: 2px 2px 0 #161616;
+    }
+    html[data-theme="papier"] .sp-skip {
+      font-family: 'Archivo', sans-serif; font-style: normal;
+      font-weight: 700; color: #6c6f72; text-decoration: underline;
+    }
+    html[data-theme="papier"] .sp-skip:hover { color: #161616; }
+    html[data-theme="papier"] .sp-tap-count {
+      font-family: 'Archivo', sans-serif; font-weight: 900; color: #1763E8;
+    }
+    html[data-theme="papier"] .sp-tap-count.sp-pop { color: #FF4B3E; }
+    html[data-theme="papier"] .sp-tap-btn {
+      background: #FFC400; color: #161616;
+      font-family: 'Archivo', sans-serif; font-weight: 900;
+      border: 3px solid #161616; border-radius: 16px;
+      box-shadow: 5px 5px 0 #161616;
+      transition: transform .07s, box-shadow .07s;
+    }
+    html[data-theme="papier"] .sp-tap-btn:active {
+      transform: translate(2px,2px); box-shadow: 2px 2px 0 #161616;
+    }
+    html[data-theme="papier"] .sp-result-score {
+      font-family: 'Archivo', sans-serif; font-weight: 900; color: #FF4B3E;
+    }
+    html[data-theme="papier"] .sp-result-msg {
+      font-family: 'Archivo', sans-serif; color: #161616; font-weight: 500;
+    }
+    html[data-theme="papier"] .sp-result-msg strong { color: #FF4B3E; font-weight: 900; }
+    html[data-theme="papier"] .sp-done-btn {
+      background: #00A082; color: #fdf9f5;
+      font-family: 'Archivo', sans-serif; font-weight: 900;
+      border: 3px solid #161616; border-radius: 12px;
+      box-shadow: 4px 4px 0 #161616; transition: transform .12s, box-shadow .12s;
+    }
+    html[data-theme="papier"] .sp-done-btn:hover {
+      background: #00A082; color: #fdf9f5;
+      transform: translate(-1px,-1px); box-shadow: 5px 5px 0 #161616;
+    }
+    html[data-theme="papier"] .sp-done-btn:active {
+      transform: translate(2px,2px); box-shadow: 1px 1px 0 #161616;
+    }
+    html[data-theme="papier"] .sp-dot { border: 1px solid #161616; }
 
     /* ════════════════════════════════════════════════════════════
        PAPIER TIGRE THEME · "Holographique"
@@ -2523,7 +2610,9 @@
         const wrap = document.createElement('div');
         wrap.className = 'sp-confetti-wrap';
         document.body.appendChild(wrap);
-        const colors = ['#8a6d4a','#6b4f3a','#a8895f','#ddd2bd','#4a3826','#c8b89a','#e0d4bc'];
+        const colors = document.documentElement.dataset.theme === 'papier'
+          ? ['#FF4B3E','#1763E8','#FFC400','#00A082','#FF5DA2','#161616','#FF7A1A']
+          : ['#8a6d4a','#6b4f3a','#a8895f','#ddd2bd','#4a3826','#c8b89a','#e0d4bc'];
         for (let i = 0; i < 70; i++) {
           const d = document.createElement('div');
           d.className = 'sp-dot';
