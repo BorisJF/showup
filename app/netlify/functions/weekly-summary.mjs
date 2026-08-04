@@ -20,25 +20,14 @@ export default async (req) => {
         commitment,
         rating,
         daily_message,
-        message_mode,
-        meditated,
-        moved
+        message_mode
       FROM entries
       WHERE date < CURRENT_DATE
       ORDER BY date DESC
       LIMIT 7
     `;
 
-    // Habit tallies over the window, for the recap letter ("meditated 5/7").
-    // Counted out of the number of entries present, not a hard 7 — a week with
-    // 4 entries reports out of 4, so a quiet week doesn't read as failure.
-    const habits = {
-      days:      rows.length,
-      meditated: rows.filter(r => r.meditated).length,
-      moved:     rows.filter(r => r.moved).length,
-    };
-
-    return Response.json({ entries: rows, habits });
+    return Response.json({ entries: rows });
 
   } catch (err) {
     console.error('[weekly-summary] error:', err);

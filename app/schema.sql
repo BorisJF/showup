@@ -10,10 +10,6 @@ CREATE TABLE IF NOT EXISTS entries (
   daily_message TEXT,
   message_mode  TEXT,
   rating       SMALLINT,
-  -- Daily habits. Recorded with the entry, but deliberately excluded from the
-  -- streak calculation — the streak stays tied to showing up alone.
-  meditated    BOOLEAN     NOT NULL DEFAULT FALSE,
-  moved        BOOLEAN     NOT NULL DEFAULT FALSE,
   created_at   TIMESTAMPTZ DEFAULT NOW()
 );
 

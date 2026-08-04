@@ -334,15 +334,6 @@
     .habit-toggle.on .habit-emoji { filter: none; opacity: 1; }
     .habit-toggle.on .habit-check { opacity: 1; color: var(--amber); }
 
-    /* Habit marks in recent mornings — present only when done. */
-    .morning-habits {
-      display: flex;
-      gap: 5px;
-      margin-top: 7px;
-      font-size: 13px;
-      opacity: 0.85;
-    }
-
     /* ── SECTION HEADER + LINE ── */
     .section-header-row {
       display: flex;
@@ -1984,16 +1975,13 @@
 
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     // BODY & MIND — two daily habits
-    // Tracked and reported, but deliberately never part of the streak: a
-    // missed workout should not erase a month of showing up.
-    //
-    // Before check-in there is no row to write to, so state lives in
-    // localStorage and rides along with the submit. After check-in, toggles
-    // PATCH straight to /api/habits — so a 7pm workout still counts.
+    // A nudge, not a metric. Deliberately device-local: nothing is sent to
+    // the server, nothing touches the streak, nothing is reported anywhere.
+    // State is keyed by date so the buttons start fresh each morning but
+    // survive a refresh during the day.
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-    let habitState    = { meditated: false, moved: false };
-    let habitCommitted = false;   // true once today's entry exists on the server
+    let habitState = { meditated: false, moved: false };
 
     function habitKey(date) { return `showup-habits-${date}`; }
 
@@ -2010,13 +1998,8 @@
       try { localStorage.setItem(habitKey(date), JSON.stringify(state)); } catch (e) {}
     }
 
-    // Server value wins when an entry exists — it is the record of record.
-    function initHabits(date, entry) {
-      habitCommitted = !!entry;
-      habitState = entry
-        ? { meditated: entry.meditated === true, moved: entry.moved === true }
-        : loadLocalHabits(date);
-      saveLocalHabits(date, habitState);
+    function initHabits(date) {
+      habitState = loadLocalHabits(date);
       renderHabits();
     }
 
@@ -2031,27 +2014,10 @@
       }
     }
 
-    async function toggleHabit(key) {
-      const date = getTodayDate();
+    function toggleHabit(key) {
       habitState[key] = !habitState[key];
       renderHabits();
-      saveLocalHabits(date, habitState);
-
-      // No entry yet → nothing to PATCH; handleCommit carries these along.
-      if (!habitCommitted) return;
-
-      try {
-        const res = await fetch('/api/habits', {
-          method:  'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify({ date, [key]: habitState[key] }),
-        });
-        if (!res.ok) throw new Error('habits patch failed: ' + res.status);
-      } catch (err) {
-        // Offline or server hiccup: keep the optimistic UI and the local copy.
-        // The next successful load reconciles against the server.
-        console.warn('[habits] could not sync, kept locally:', err);
-      }
+      saveLocalHabits(getTodayDate(), habitState);
     }
 
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -2186,17 +2152,12 @@
               `<div class="morning-rating-dot${i <= e.rating ? ' filled' : ''}"></div>`
             ).join('')}</div>`
           : '';
-        // Only shown when done — an absent habit leaves no mark, by design.
-        const habitMarks = (e.meditated || e.moved)
-          ? `<div class="morning-habits">${e.meditated ? '<span title="' + esc(t('habitMeditate')) + '">\u{1F300}</span>' : ''}${e.moved ? '<span title="' + esc(t('habitMove')) + '">\u{1F3C3}</span>' : ''}</div>`
-          : '';
         return `
           <div class="morning-entry">
             <div class="morning-date">${formatDate(e.date)}</div>
             <div class="morning-focus">${esc(e.focus)}</div>
             <div class="morning-commitment">${esc(e.commitment)}</div>
             ${ratingDots}
-            ${habitMarks}
           </div>
         `;
       }).join('');
@@ -2358,7 +2319,6 @@
         applyStaticLabels();
         renderHeader(date, data.streak ?? 0);
         renderHistory(data.history || []);
-        initHabits(date, data.today);
         if (data.today) renderCommittedDay(data.today);
         else renderFreshDay();
       } catch {
@@ -2387,7 +2347,7 @@
       // from localStorage. Paint them before any network call so they survive
       // a failed / slow /api/load instead of rendering empty.
       applyStaticLabels();
-      initHabits(date, null);
+      initHabits(date);
 
       // ── Sync pending offline draft ───────────────────────────────────────
       const pendingDraft = localStorage.getItem('showup-draft');
@@ -2401,7 +2361,6 @@
             body: JSON.stringify({
               date: d.date, focus: d.focus, commitment: d.commitment,
               lang: d.lang || 'en',
-              meditated: d.meditated === true, moved: d.moved === true,
             }),
           });
         } catch {}
@@ -2445,8 +2404,6 @@
           return;
         }
       }
-
-      initHabits(date, data.today);
 
       if (data.today) renderCommittedDay(data.today);
       else renderFreshDay();
@@ -2547,7 +2504,7 @@
 
       // ── Offline draft ──────────────────────────────────────────────────────
       if (!navigator.onLine) {
-        localStorage.setItem('showup-draft', JSON.stringify({ date, focus, commitment, lang, ...habitState }));
+        localStorage.setItem('showup-draft', JSON.stringify({ date, focus, commitment, lang }));
         document.getElementById('checkin-section').innerHTML = `
           <div class="offline-saved">
             <div class="offline-saved-label">${esc(t('offlineLabel'))}</div>
@@ -2564,12 +2521,11 @@
         const res = await fetch('/api/submit', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ date, focus, commitment, lang, ...habitState }),
+          body: JSON.stringify({ date, focus, commitment, lang }),
         });
 
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const entry = await res.json();
-        initHabits(date, entry);   // entry now exists → later toggles PATCH
 
         // ── Submit celebration → then show committed view ──────────────────
         triggerSubmitCelebration(() => {

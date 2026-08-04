@@ -37,8 +37,6 @@ export default async (req) => {
         daily_message,
         message_mode,
         rating,
-        meditated,
-        moved,
         created_at
       FROM entries
       WHERE date = ${date}
@@ -64,9 +62,7 @@ export default async (req) => {
         commitment,
         daily_message,
         message_mode,
-        rating,
-        meditated,
-        moved
+        rating
       FROM entries
       WHERE date < ${date}
       ORDER BY date DESC

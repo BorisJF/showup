@@ -1,0 +1,23 @@
+Body & mind: drop the database side, keep the buttons (sw v27)
+
+The meditate/move toggles were writing to two new columns on entries,
+which meant a schema migration. This project had never run one, so the
+tooling didn't exist and production sat broken on a 500 from the missing
+columns while we sorted it out. Not worth it for a nudge.
+
+The toggles now live entirely in the browser: state keyed by date in
+localStorage, so they start fresh each morning and survive a refresh
+during the day. Nothing is sent to the server.
+
+Reverted: the meditated/moved columns and their migration, /api/habits
+and its tests, the habit fields in submit/load/weekly-summary, the habit
+marks in recent mornings, and the scripts/migrate.mjs helper written to
+apply the migration.
+
+Kept: the rating column in schema.sql, which the live database has had
+for a while but the checked-in schema never documented.
+
+Trade-off accepted: no habit tallies in the weekly letter, no marks in
+history, and ticking a workout on the phone won't show on the laptop.
+
+app/netlify is now byte-identical to f450003.
