@@ -1,12 +1,12 @@
 /**
  * Unit tests — load function handler
- * The @netlify/neon module is mocked so no real DB is touched.
+ * The @neondatabase/serverless module is mocked so no real DB is touched.
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// ── Mock @netlify/neon before importing the handler ──────────────────────────
+// ── Mock @neondatabase/serverless before importing the handler ──────────────────────────
 const mockSql = vi.fn();
-vi.mock('@netlify/neon', () => ({
+vi.mock('@neondatabase/serverless', () => ({
   neon: () => mockSql,
 }));
 

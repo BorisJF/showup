@@ -6,7 +6,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // ── Mock @netlify/neon ───────────────────────────────────────────────────────
 const mockSql = vi.fn();
-vi.mock('@netlify/neon', () => ({
+vi.mock('@neondatabase/serverless', () => ({
   neon: () => mockSql,
 }));
 

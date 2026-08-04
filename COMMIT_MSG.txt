@@ -1,0 +1,23 @@
+Three ways to respond, body & mind habits, Cutestom as default (sw v25)
+
+Edit 1 — "Three ways to respond" card between the hero and the check-in.
+Collapsed by default with the three names as pastel chips; expands to the
+full definitions. State persists in localStorage. EN + FR.
+
+Edit 2 — "Body & mind" card with meditate/move toggles. Tracked in the DB
+and reported in the weekly letter, but deliberately excluded from the
+streak: a missed workout should not erase a month of showing up. Toggles
+work before check-in (localStorage, carried along with submit) and after
+(PATCH /api/habits), so a 7pm workout still counts.
+
+Edit 3 — Cutestom becomes the default theme; the warm-serif original is
+now opt-in via the toggle. All saturated accents retired for the pastels
+sampled from the holographic band: vermilion/sunflower/cobalt/teal and
+last week's hot-pink bloom become rose/mint/indigo/plum. The commit
+button becomes the ink pill CTA. Card treatment standardised on 1px ink
+border + 10px radius + 6px6px hard pastel offset.
+
+Also fixes a pre-existing test bug: load and submit tests mocked
+@netlify/neon while the functions import @neondatabase/serverless, so the
+mock never bound and 11 tests were silently hitting the network. 48/48
+now pass, including new coverage for /api/habits.

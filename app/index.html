@@ -13,8 +13,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet">
   <!-- Papier Tigre theme typeface (only used when the alt skin is active) -->
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;800;900&display=swap" rel="stylesheet">
-  <!-- Apply saved style before paint to avoid a flash -->
-  <script>(function(){try{if(localStorage.getItem('showup-theme')==='papier'){document.documentElement.setAttribute('data-theme','papier');}}catch(e){}})();</script>
+  <!-- Apply saved style before paint to avoid a flash.
+       Cutestom is the default; the warm-serif original is opt-in.
+       Note the attribute value stays "papier" for backwards compatibility —
+       every themed rule below is keyed on it. -->
+  <script>(function(){var warm=false;try{warm=localStorage.getItem('showup-theme')==='warm';}catch(e){}if(!warm){document.documentElement.setAttribute('data-theme','papier');}})();</script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -144,6 +147,200 @@
       background: var(--rule-color);
       margin: 18px auto 0;
       border-radius: 1px;
+    }
+
+    /* ── THREE WAYS TO RESPOND ───────────────────────────────────────────
+       A standing frame, collapsed by default. The chips stay visible when
+       closed so the three names are always in view — that's most of the
+       value, and it costs almost no vertical space. */
+    .ways-card {
+      margin-bottom: 18px;
+      padding: 14px 16px 15px;
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .ways-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 0;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font: inherit;
+      color: inherit;
+      text-align: left;
+    }
+
+    .ways-eyebrow {
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--amber);
+    }
+
+    .ways-chevron {
+      font-size: 12px;
+      color: var(--muted);
+      transition: transform 0.18s ease;
+    }
+    .ways-card.open .ways-chevron { transform: rotate(180deg); }
+
+    .ways-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 11px;
+    }
+    .ways-card.open .ways-chips { display: none; }
+
+    .ways-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--amber-light);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .ways-chip-emoji { font-size: 12px; }
+
+    .ways-body { margin-top: 13px; }
+
+    .ways-intro {
+      margin: 0 0 13px;
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--muted);
+      text-wrap: pretty;
+    }
+
+    .ways-item {
+      display: flex;
+      gap: 11px;
+      align-items: flex-start;
+      padding: 9px 0;
+      border-top: 1px solid var(--card-border);
+    }
+    .ways-item:first-of-type { border-top: none; padding-top: 0; }
+
+    .ways-item-emoji {
+      flex: 0 0 auto;
+      font-size: 20px;
+      line-height: 1.3;
+    }
+
+    .ways-item-name {
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text);
+      margin-bottom: 3px;
+    }
+
+    .ways-item-def {
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--muted);
+      text-wrap: pretty;
+    }
+
+    /* ── BODY & MIND ─────────────────────────────────────────────────────
+       Two habits, ticked at any hour. Never part of the streak. */
+    .habit-card {
+      margin-bottom: 34px;
+      padding: 14px 16px 15px;
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .habit-eyebrow {
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--amber);
+    }
+
+    .habit-line {
+      margin-top: 9px;
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--muted);
+      text-wrap: pretty;
+    }
+
+    .habit-toggles {
+      display: flex;
+      gap: 9px;
+      margin-top: 13px;
+    }
+
+    .habit-toggle {
+      flex: 1 1 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 11px 10px;
+      background: transparent;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      cursor: pointer;
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.08s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .habit-toggle:active { transform: scale(0.97); }
+
+    .habit-emoji {
+      font-size: 16px;
+      filter: grayscale(1);
+      opacity: 0.45;
+      transition: filter 0.15s, opacity 0.15s;
+    }
+
+    .habit-check {
+      font-size: 12px;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+
+    .habit-toggle.on {
+      background: var(--amber-light);
+      border-color: var(--amber);
+      color: var(--text);
+    }
+    .habit-toggle.on .habit-emoji { filter: none; opacity: 1; }
+    .habit-toggle.on .habit-check { opacity: 1; color: var(--amber); }
+
+    /* Habit marks in recent mornings — present only when done. */
+    .morning-habits {
+      display: flex;
+      gap: 5px;
+      margin-top: 7px;
+      font-size: 13px;
+      opacity: 0.85;
     }
 
     /* ── SECTION HEADER + LINE ── */
@@ -699,14 +896,14 @@
       from { clip-path: circle(150% at 50% 50%); }
       to   { clip-path: circle(0% at 50% 50%); }
     }
-    /* Papier Tigre recolours the bloom hot pink (#FF5DA2); the default
+    /* Papier Tigre recolours the bloom hot pink (#c98fa4); the default
        warm-serif theme keeps its brown wash. */
     html[data-theme="papier"] .bloom-overlay {
       background: radial-gradient(
         circle at 50% 50%,
-        rgba(255, 93, 162, 0.92) 0%,
-        rgba(255, 93, 162, 0.78) 42%,
-        rgba(255, 122, 178, 0.46) 100%
+        rgba(201, 143, 164, 0.92) 0%,
+        rgba(201, 143, 164, 0.78) 42%,
+        rgba(217, 193, 210, 0.46) 100%
       );
     }
 
@@ -1015,6 +1212,7 @@
        Default warm-serif game is untouched. */
     html[data-theme="papier"] .sp-overlay { background: rgba(22, 22, 22, 0.55); }
     html[data-theme="papier"] .sp-card {
+      border-radius: 10px;
       background: #ffffff; border: 3px solid #161616; border-radius: 22px;
       box-shadow: 8px 8px 0 #161616;
       font-family: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
@@ -1033,14 +1231,14 @@
       font-weight: 500; color: #6c6f72;
     }
     html[data-theme="papier"] .sp-big-btn {
-      background: #FF4B3E; color: #fdf9f5;
+      background: #c98fa4; color: #fdf9f5;
       font-family: 'Archivo', sans-serif; font-weight: 900;
       border: 3px solid #161616; border-radius: 14px;
       box-shadow: 5px 5px 0 #161616;
       transition: transform .12s, box-shadow .12s;
     }
     html[data-theme="papier"] .sp-big-btn:hover {
-      background: #FF4B3E; transform: translate(-1px,-1px);
+      background: #c98fa4; transform: translate(-1px,-1px);
       box-shadow: 6px 6px 0 #161616;
     }
     html[data-theme="papier"] .sp-big-btn:active {
@@ -1052,11 +1250,11 @@
     }
     html[data-theme="papier"] .sp-skip:hover { color: #161616; }
     html[data-theme="papier"] .sp-tap-count {
-      font-family: 'Archivo', sans-serif; font-weight: 900; color: #1763E8;
+      font-family: 'Archivo', sans-serif; font-weight: 900; color: #7e83c0;
     }
-    html[data-theme="papier"] .sp-tap-count.sp-pop { color: #FF4B3E; }
+    html[data-theme="papier"] .sp-tap-count.sp-pop { color: #c98fa4; }
     html[data-theme="papier"] .sp-tap-btn {
-      background: #FFC400; color: #161616;
+      background: #7cbb9e; color: #161616;
       font-family: 'Archivo', sans-serif; font-weight: 900;
       border: 3px solid #161616; border-radius: 16px;
       box-shadow: 5px 5px 0 #161616;
@@ -1066,20 +1264,20 @@
       transform: translate(2px,2px); box-shadow: 2px 2px 0 #161616;
     }
     html[data-theme="papier"] .sp-result-score {
-      font-family: 'Archivo', sans-serif; font-weight: 900; color: #FF4B3E;
+      font-family: 'Archivo', sans-serif; font-weight: 900; color: #c98fa4;
     }
     html[data-theme="papier"] .sp-result-msg {
       font-family: 'Archivo', sans-serif; color: #161616; font-weight: 500;
     }
-    html[data-theme="papier"] .sp-result-msg strong { color: #FF4B3E; font-weight: 900; }
+    html[data-theme="papier"] .sp-result-msg strong { color: #161616; font-weight: 900; }
     html[data-theme="papier"] .sp-done-btn {
-      background: #00A082; color: #fdf9f5;
+      background: #a987b0; color: #fdf9f5;
       font-family: 'Archivo', sans-serif; font-weight: 900;
       border: 3px solid #161616; border-radius: 12px;
       box-shadow: 4px 4px 0 #161616; transition: transform .12s, box-shadow .12s;
     }
     html[data-theme="papier"] .sp-done-btn:hover {
-      background: #00A082; color: #fdf9f5;
+      background: #a987b0; color: #fdf9f5;
       transform: translate(-1px,-1px); box-shadow: 5px 5px 0 #161616;
     }
     html[data-theme="papier"] .sp-done-btn:active {
@@ -1105,10 +1303,73 @@
       --badge-bg:    #c5d4e0;   /* powder blue (fallback) */
       --rule-color:  #161616;   /* sharp black rules */
       --pt-holo: linear-gradient(160deg,
-        #7e83c0 0%, #a987b0 11%, #c98fa4 21%, #d9c1d2 34%,
+        #7e83c0 0%, #a987b0 12%, #c98fa4 22%, #d9c1d2 34%,
         #f0ebdd 50%, #e7ecda 62%, #bfe0ce 76%, #a6d9c2 90%, #bcdcd6 100%);
-      --pt-pink: #e2a0b0;
+      /* Accents, all sampled from the band above. */
+      --pt-indigo: #7e83c0;
+      --pt-rose:   #c98fa4;
+      --pt-mint:   #7cbb9e;
+      --pt-plum:   #a987b0;
+      --pt-pink:   #c98fa4;   /* legacy alias → rose */
     }
+
+
+    /* ── The two new cards, in Cutestom ──────────────────────────────────
+       One pastel accent each, drawn from the band: plum for the frame,
+       mint for the habits. Chips are solid pastel with white Archivo,
+       and the eyebrow rules disappear — whitespace does the separating. */
+    html[data-theme="papier"] .ways-card,
+    html[data-theme="papier"] .habit-card {
+      background: #ffffff;
+      border: 1px solid #161616;
+      border-radius: 10px;
+    }
+    html[data-theme="papier"] .ways-card  { box-shadow: 6px 6px 0 0 var(--pt-plum); }
+    html[data-theme="papier"] .habit-card { box-shadow: 6px 6px 0 0 var(--pt-mint); }
+
+    html[data-theme="papier"] .ways-eyebrow,
+    html[data-theme="papier"] .habit-eyebrow,
+    html[data-theme="papier"] .ways-item-name,
+    html[data-theme="papier"] .habit-toggle,
+    html[data-theme="papier"] .ways-chip {
+      font-family: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+    }
+    html[data-theme="papier"] .ways-eyebrow  { color: var(--pt-plum); }
+    html[data-theme="papier"] .habit-eyebrow { color: var(--pt-mint); }
+    html[data-theme="papier"] .ways-item-name {
+      font-weight: 800; letter-spacing: 0.12em; color: #161616;
+    }
+
+    /* Solid pastel chips, white uppercase label. */
+    html[data-theme="papier"] .ways-chip   { color: #ffffff; letter-spacing: 0.10em; }
+    html[data-theme="papier"] .ways-chip-0 { background: var(--pt-indigo); }
+    html[data-theme="papier"] .ways-chip-1 { background: var(--pt-rose); }
+    html[data-theme="papier"] .ways-chip-2 { background: var(--pt-plum); }
+
+    /* No lines — whitespace separates the three items instead. */
+    html[data-theme="papier"] .ways-item { border-top: none; padding: 7px 0; }
+
+    html[data-theme="papier"] .ways-intro,
+    html[data-theme="papier"] .ways-item-def,
+    html[data-theme="papier"] .habit-line { color: #444; }
+
+    html[data-theme="papier"] .habit-toggle {
+      border: 1px solid #161616;
+      border-radius: 999px;
+      color: #777;
+      letter-spacing: 0.08em;
+      transition: background 0.15s, color 0.15s, transform 0.08s;
+    }
+    html[data-theme="papier"] .habit-toggle:hover  { transform: translateY(-1px); }
+    html[data-theme="papier"] .habit-toggle:active { transform: scale(0.96); }
+    html[data-theme="papier"] .habit-toggle.on {
+      background: var(--pt-mint);
+      border-color: #161616;
+      color: #ffffff;
+    }
+    html[data-theme="papier"] .habit-toggle.on .habit-check { color: #ffffff; }
 
     /* ── HERO PANEL ── groups greeting + "remember this" on the gradient.
        In the default theme .pt-hero is display:contents (invisible wrapper). */
@@ -1154,38 +1415,58 @@
     }
 
     /* Sharper, flatter surfaces */
-    html[data-theme="papier"] .focus-card  { border-radius: 4px; border-width: 1.5px; }
-    html[data-theme="papier"] textarea      { border-radius: 4px; }
+    html[data-theme="papier"] .focus-card {
+      border-radius: 10px;
+      border: 1px solid #161616;
+      box-shadow: 6px 6px 0 0 var(--pt-indigo);
+      transition: transform 0.12s, box-shadow 0.12s;
+    }
+    html[data-theme="papier"] .focus-card:active { transform: scale(0.985); }
+    html[data-theme="papier"] .focus-card.selected {
+      box-shadow: 6px 6px 0 0 var(--pt-rose);
+    }
+    html[data-theme="papier"] textarea {
+      border-radius: 10px;
+      border: 1px solid #161616;
+    }
     html[data-theme="papier"] .letter-badge {
-      border-radius: 4px;
+      border-radius: 8px;
       background: linear-gradient(120deg, #e4c98d 0%, #e8978a 27%, #4d7a9c 63%, #2e8067 100%);
       color: #ffffff;
     }
     html[data-theme="papier"] .remember-rule { border-radius: 0; height: 3px; }
     html[data-theme="papier"] .streak-pill {
-      border: 1.5px solid var(--text);
-      box-shadow: 3px 3px 0 0 var(--pt-pink);
+      border: 1px solid var(--text);
+      border-radius: 999px;
+      box-shadow: 3px 3px 0 0 var(--pt-mint);
     }
 
     /* Signature offset-shadow primary button — white, black border, pink offset */
     html[data-theme="papier"] .commit-btn {
       font-family: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
       font-weight: 800;
-      background: #ffffff;
-      color: #161616;
-      border: 2px solid #161616;
-      border-radius: 2px;
-      box-shadow: 5px 5px 0 0 var(--pt-pink);
-      transition: transform 0.12s, box-shadow 0.12s, opacity 0.12s;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      background: #161616;
+      color: #ffffff;
+      border: 1px solid #161616;
+      border-radius: 999px;
+      box-shadow: none;
+      transition: background 0.14s, color 0.14s, transform 0.08s;
     }
-    html[data-theme="papier"] .commit-btn:hover    { opacity: 1; transform: translate(-1px,-1px); box-shadow: 6px 6px 0 0 var(--pt-pink); }
-    html[data-theme="papier"] .commit-btn:active   { opacity: 1; transform: translate(2px,2px);   box-shadow: 2px 2px 0 0 var(--pt-pink); }
-    html[data-theme="papier"] .commit-btn:disabled { box-shadow: 3px 3px 0 0 rgba(22,22,22,0.12); }
+    html[data-theme="papier"] .commit-btn:hover {
+      opacity: 1; background: #ffffff; color: #161616;
+    }
+    html[data-theme="papier"] .commit-btn:active   { opacity: 1; transform: scale(0.96); }
+    html[data-theme="papier"] .commit-btn:disabled {
+      background: #ffffff; color: rgba(22,22,22,0.35);
+      border-color: rgba(22,22,22,0.18); box-shadow: none;
+    }
 
     /* Outline "change" button, squared */
     html[data-theme="papier"] .change-btn {
-      border-radius: 2px;
-      border: 1.5px solid var(--text);
+      border-radius: 999px;
+      border: 1px solid var(--text);
       font-family: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
       font-weight: 700;
       text-transform: uppercase;
@@ -1277,7 +1558,7 @@
   <div id="splash">
     <img id="sp-logo" alt="">
     <script>
-      // Papier Tigre uses the holographic logo; default theme uses the standard logo.
+      // Cutestom uses the holographic logo; the warm original uses the standard logo.
       // data-theme is already set by the head script, so this picks the right one with no flash.
       (function () {
         var papier = document.documentElement.getAttribute('data-theme') === 'papier';
@@ -1336,6 +1617,34 @@
     </div>
   </div>
 
+  <!-- THREE WAYS TO RESPOND — collapsed by default, state remembered -->
+  <div class="ways-card" id="ways-card">
+    <button class="ways-toggle" id="ways-toggle" onclick="toggleWays()" aria-expanded="false" aria-controls="ways-body">
+      <span class="ways-eyebrow" id="ways-eyebrow">Three ways to respond</span>
+      <span class="ways-chevron" aria-hidden="true">▾</span>
+    </button>
+    <div class="ways-chips" id="ways-chips"></div>
+    <div class="ways-body" id="ways-body" hidden></div>
+  </div>
+
+  <!-- BODY &amp; MIND — two daily habits, tracked but never part of the streak -->
+  <div class="habit-card" id="habit-card">
+    <div class="habit-eyebrow" id="habit-eyebrow">Body &amp; mind</div>
+    <div class="habit-line" id="habit-line"></div>
+    <div class="habit-toggles">
+      <button class="habit-toggle" id="habit-meditate" onclick="toggleHabit('meditated')" aria-pressed="false">
+        <span class="habit-emoji" aria-hidden="true">🌀</span>
+        <span class="habit-name" id="habit-meditate-label">Meditate</span>
+        <span class="habit-check" aria-hidden="true">✓</span>
+      </button>
+      <button class="habit-toggle" id="habit-move" onclick="toggleHabit('moved')" aria-pressed="false">
+        <span class="habit-emoji" aria-hidden="true">🏃</span>
+        <span class="habit-name" id="habit-move-label">Move</span>
+        <span class="habit-check" aria-hidden="true">✓</span>
+      </button>
+    </div>
+  </div>
+
   <!-- TODAY'S CHECK-IN (fresh or committed state) -->
   <div id="checkin-section">
     <div class="loading">Loading...</div>
@@ -1383,6 +1692,17 @@
         greetAfternoon: 'Good afternoon, Boris.',
         greetEvening: 'Good evening, Boris.',
         rememberLabel: 'Remember this',
+        waysLabel: 'Three ways to respond',
+        waysIntro: 'However hurtful the situation or the feeling, there are always three ways to respond.',
+        ways: [
+          { emoji: '\u{1F9D8}', name: 'Acceptance',  def: 'Just make peace with the fact that this is reality and move on to more important things.' },
+          { emoji: '\u{1F476}', name: 'Retaliation', def: 'Strongly express your opinion, seeking to create maximum impact (and reaction).' },
+          { emoji: '\u{1F4BC}', name: 'Diplomacy',   def: 'Find a way to make your voice heard that is both caring and productive.' },
+        ],
+        habitLabel: 'Body & mind',
+        habitLine: 'Meditating every day and working out regularly is the most effective way to feel better.',
+        habitMeditate: 'Meditate',
+        habitMove: 'Move',
         streak: n => `${n} -day streak`,
         mark7: '7-day mark', mark30: '30-day mark', mark100: '100-day mark',
         recentMornings: 'Recent mornings',
@@ -1456,6 +1776,17 @@
         greetAfternoon: 'Bon après-midi, Boris.',
         greetEvening: 'Bonsoir, Boris.',
         rememberLabel: 'À retenir',
+        waysLabel: 'Trois façons de réagir',
+        waysIntro: 'Aussi blessante que soit la situation ou l\u2019émotion, il y a toujours trois façons de réagir.',
+        ways: [
+          { emoji: '\u{1F9D8}', name: 'Acceptation', def: 'Faire la paix avec le fait que c\u2019est la réalité, et passer à des choses plus importantes.' },
+          { emoji: '\u{1F476}', name: 'Riposte',     def: 'Exprimer fermement son opinion, en cherchant l\u2019impact (et la réaction) maximal.' },
+          { emoji: '\u{1F4BC}', name: 'Diplomatie',  def: 'Trouver une façon de se faire entendre qui soit à la fois bienveillante et productive.' },
+        ],
+        habitLabel: 'Corps & esprit',
+        habitLine: 'Méditer chaque jour et bouger régulièrement, c\u2019est le moyen le plus efficace de se sentir mieux.',
+        habitMeditate: 'Méditer',
+        habitMove: 'Bouger',
         streak: n => `série de ${n} jour${n > 1 ? 's' : ''}`,
         mark7: 'cap des 7 jours', mark30: 'cap des 30 jours', mark100: 'cap des 100 jours',
         recentMornings: 'Tes derniers matins',
@@ -1584,10 +1915,143 @@
       set('remember-label', t('rememberLabel'));
       set('recent-label', t('recentMornings'));
       set('words-label', t('yourWords'));
+      set('ways-eyebrow', t('waysLabel'));
+      set('habit-eyebrow', t('habitLabel'));
+      set('habit-line', t('habitLine'));
+      set('habit-meditate-label', t('habitMeditate'));
+      set('habit-move-label', t('habitMove'));
+      renderWays();
       const fe = document.getElementById('flag-en');
       const ff = document.getElementById('flag-fr');
       if (fe) fe.classList.toggle('on', lang === 'en');
       if (ff) ff.classList.toggle('on', lang === 'fr');
+    }
+
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // THREE WAYS TO RESPOND
+    // A standing frame, not a daily prompt. Collapsed by default so it never
+    // stands between you and the practice; the chips keep the three names in
+    // view even when closed, which is most of the value.
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    function waysOpen() {
+      try { return localStorage.getItem('showup-ways-open') === '1'; } catch (e) { return false; }
+    }
+
+    function renderWays() {
+      const ways   = I18N[lang].ways || [];
+      const chips  = document.getElementById('ways-chips');
+      const body   = document.getElementById('ways-body');
+      if (!chips || !body) return;
+
+      chips.innerHTML = ways.map((w, i) => `
+        <span class="ways-chip ways-chip-${i}">
+          <span class="ways-chip-emoji" aria-hidden="true">${w.emoji}</span>${esc(w.name)}
+        </span>
+      `).join('');
+
+      body.innerHTML = `
+        <p class="ways-intro">${esc(t('waysIntro'))}</p>
+        ${ways.map((w, i) => `
+          <div class="ways-item ways-item-${i}">
+            <div class="ways-item-emoji" aria-hidden="true">${w.emoji}</div>
+            <div class="ways-item-text">
+              <div class="ways-item-name">${esc(w.name)}</div>
+              <div class="ways-item-def">${esc(w.def)}</div>
+            </div>
+          </div>
+        `).join('')}
+      `;
+
+      applyWaysOpen(waysOpen());
+    }
+
+    function applyWaysOpen(open) {
+      const card   = document.getElementById('ways-card');
+      const body   = document.getElementById('ways-body');
+      const toggle = document.getElementById('ways-toggle');
+      if (!card || !body || !toggle) return;
+      body.hidden = !open;
+      card.classList.toggle('open', open);
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+
+    function toggleWays() {
+      const next = !waysOpen();
+      try { localStorage.setItem('showup-ways-open', next ? '1' : '0'); } catch (e) {}
+      applyWaysOpen(next);
+    }
+
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // BODY & MIND — two daily habits
+    // Tracked and reported, but deliberately never part of the streak: a
+    // missed workout should not erase a month of showing up.
+    //
+    // Before check-in there is no row to write to, so state lives in
+    // localStorage and rides along with the submit. After check-in, toggles
+    // PATCH straight to /api/habits — so a 7pm workout still counts.
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    let habitState    = { meditated: false, moved: false };
+    let habitCommitted = false;   // true once today's entry exists on the server
+
+    function habitKey(date) { return `showup-habits-${date}`; }
+
+    function loadLocalHabits(date) {
+      try {
+        const raw = localStorage.getItem(habitKey(date));
+        if (!raw) return { meditated: false, moved: false };
+        const p = JSON.parse(raw);
+        return { meditated: p.meditated === true, moved: p.moved === true };
+      } catch (e) { return { meditated: false, moved: false }; }
+    }
+
+    function saveLocalHabits(date, state) {
+      try { localStorage.setItem(habitKey(date), JSON.stringify(state)); } catch (e) {}
+    }
+
+    // Server value wins when an entry exists — it is the record of record.
+    function initHabits(date, entry) {
+      habitCommitted = !!entry;
+      habitState = entry
+        ? { meditated: entry.meditated === true, moved: entry.moved === true }
+        : loadLocalHabits(date);
+      saveLocalHabits(date, habitState);
+      renderHabits();
+    }
+
+    function renderHabits() {
+      const map = { meditated: 'habit-meditate', moved: 'habit-move' };
+      for (const [key, id] of Object.entries(map)) {
+        const el = document.getElementById(id);
+        if (!el) continue;
+        const on = habitState[key] === true;
+        el.classList.toggle('on', on);
+        el.setAttribute('aria-pressed', on ? 'true' : 'false');
+      }
+    }
+
+    async function toggleHabit(key) {
+      const date = getTodayDate();
+      habitState[key] = !habitState[key];
+      renderHabits();
+      saveLocalHabits(date, habitState);
+
+      // No entry yet → nothing to PATCH; handleCommit carries these along.
+      if (!habitCommitted) return;
+
+      try {
+        const res = await fetch('/api/habits', {
+          method:  'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ date, [key]: habitState[key] }),
+        });
+        if (!res.ok) throw new Error('habits patch failed: ' + res.status);
+      } catch (err) {
+        // Offline or server hiccup: keep the optimistic UI and the local copy.
+        // The next successful load reconciles against the server.
+        console.warn('[habits] could not sync, kept locally:', err);
+      }
     }
 
     // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -1722,12 +2186,17 @@
               `<div class="morning-rating-dot${i <= e.rating ? ' filled' : ''}"></div>`
             ).join('')}</div>`
           : '';
+        // Only shown when done — an absent habit leaves no mark, by design.
+        const habitMarks = (e.meditated || e.moved)
+          ? `<div class="morning-habits">${e.meditated ? '<span title="' + esc(t('habitMeditate')) + '">\u{1F300}</span>' : ''}${e.moved ? '<span title="' + esc(t('habitMove')) + '">\u{1F3C3}</span>' : ''}</div>`
+          : '';
         return `
           <div class="morning-entry">
             <div class="morning-date">${formatDate(e.date)}</div>
             <div class="morning-focus">${esc(e.focus)}</div>
             <div class="morning-commitment">${esc(e.commitment)}</div>
             ${ratingDots}
+            ${habitMarks}
           </div>
         `;
       }).join('');
@@ -1889,6 +2358,7 @@
         applyStaticLabels();
         renderHeader(date, data.streak ?? 0);
         renderHistory(data.history || []);
+        initHabits(date, data.today);
         if (data.today) renderCommittedDay(data.today);
         else renderFreshDay();
       } catch {
@@ -1917,12 +2387,16 @@
       const pendingDraft = localStorage.getItem('showup-draft');
       if (pendingDraft && navigator.onLine) {
         try {
-          const { date: dd, focus: df, commitment: dc, lang: dl } = JSON.parse(pendingDraft);
+          const d = JSON.parse(pendingDraft);
           localStorage.removeItem('showup-draft');
           await fetch('/api/submit', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ date: dd, focus: df, commitment: dc, lang: dl || 'en' }),
+            body: JSON.stringify({
+              date: d.date, focus: d.focus, commitment: d.commitment,
+              lang: d.lang || 'en',
+              meditated: d.meditated === true, moved: d.moved === true,
+            }),
           });
         } catch {}
       }
@@ -1965,6 +2439,8 @@
           return;
         }
       }
+
+      initHabits(date, data.today);
 
       if (data.today) renderCommittedDay(data.today);
       else renderFreshDay();
@@ -2065,7 +2541,7 @@
 
       // ── Offline draft ──────────────────────────────────────────────────────
       if (!navigator.onLine) {
-        localStorage.setItem('showup-draft', JSON.stringify({ date, focus, commitment, lang }));
+        localStorage.setItem('showup-draft', JSON.stringify({ date, focus, commitment, lang, ...habitState }));
         document.getElementById('checkin-section').innerHTML = `
           <div class="offline-saved">
             <div class="offline-saved-label">${esc(t('offlineLabel'))}</div>
@@ -2082,11 +2558,12 @@
         const res = await fetch('/api/submit', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ date, focus, commitment, lang }),
+          body: JSON.stringify({ date, focus, commitment, lang, ...habitState }),
         });
 
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const entry = await res.json();
+        initHabits(date, entry);   // entry now exists → later toggles PATCH
 
         // ── Submit celebration → then show committed view ──────────────────
         triggerSubmitCelebration(() => {
@@ -2611,7 +3088,7 @@
         wrap.className = 'sp-confetti-wrap';
         document.body.appendChild(wrap);
         const colors = document.documentElement.dataset.theme === 'papier'
-          ? ['#FF4B3E','#1763E8','#FFC400','#00A082','#FF5DA2','#161616','#FF7A1A']
+          ? ['#c98fa4','#7e83c0','#7cbb9e','#a987b0','#c98fa4','#161616','#d9c1d2']
           : ['#8a6d4a','#6b4f3a','#a8895f','#ddd2bd','#4a3826','#c8b89a','#e0d4bc'];
         for (let i = 0; i < 70; i++) {
           const d = document.createElement('div');
@@ -2746,21 +3223,21 @@
     }
   </script>
 
-  <!-- Style toggle: flips between the default look and the Papier Tigre skin -->
+  <!-- Style toggle: flips between Cutestom (default) and the warm-serif original -->
   <script>
     function applyStyleLabel() {
       var on = document.documentElement.getAttribute('data-theme') === 'papier';
       var el = document.getElementById('style-toggle-label');
-      if (el) el.textContent = on ? 'Original' : 'Papier Tigre';
+      if (el) el.textContent = on ? 'Original' : 'Cutestom';
     }
     function toggleStyle() {
       var on = document.documentElement.getAttribute('data-theme') === 'papier';
       if (on) {
         document.documentElement.removeAttribute('data-theme');
-        try { localStorage.removeItem('showup-theme'); } catch (e) {}
+        try { localStorage.setItem('showup-theme', 'warm'); } catch (e) {}
       } else {
         document.documentElement.setAttribute('data-theme', 'papier');
-        try { localStorage.setItem('showup-theme', 'papier'); } catch (e) {}
+        try { localStorage.setItem('showup-theme', 'cutestom'); } catch (e) {}
       }
       applyStyleLabel();
     }

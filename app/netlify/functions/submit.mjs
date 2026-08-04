@@ -55,6 +55,12 @@ export default async (req) => {
 
   const { date, focus, commitment, lang } = body;
 
+  // Habits may ride along with the check-in (ticked before submitting).
+  // Anything non-boolean is treated as false rather than rejected — a bad
+  // habit flag should never cost someone their check-in.
+  const meditated = body.meditated === true;
+  const moved     = body.moved     === true;
+
   if (!date || !focus || !commitment) {
     return Response.json(
       { error: 'date, focus, and commitment are all required.' },
@@ -79,6 +85,8 @@ export default async (req) => {
       commitment,
       daily_message,
       message_mode,
+      meditated,
+      moved,
       created_at
     FROM entries
     WHERE date = ${date}
@@ -135,8 +143,8 @@ export default async (req) => {
   // 4. Save to DB
   try {
     const inserted = await sql`
-      INSERT INTO entries (date, focus, commitment, daily_message, message_mode)
-      VALUES (${date}, ${focus}, ${commitment}, ${dailyMessage}, ${mode})
+      INSERT INTO entries (date, focus, commitment, daily_message, message_mode, meditated, moved)
+      VALUES (${date}, ${focus}, ${commitment}, ${dailyMessage}, ${mode}, ${meditated}, ${moved})
       ON CONFLICT (date) DO NOTHING
       RETURNING
         id,
@@ -145,6 +153,8 @@ export default async (req) => {
         commitment,
         daily_message,
         message_mode,
+        meditated,
+        moved,
         created_at
     `;
 
@@ -162,12 +172,14 @@ export default async (req) => {
         commitment,
         daily_message,
         message_mode,
+        meditated,
+        moved,
         created_at
       FROM entries
       WHERE date = ${date}
       LIMIT 1
     `;
-    return Response.json(winner[0] ?? { date, focus, commitment, daily_message: dailyMessage, message_mode: mode });
+    return Response.json(winner[0] ?? { date, focus, commitment, daily_message: dailyMessage, message_mode: mode, meditated, moved });
 
   } catch (err) {
     console.error('[submit] database error:', err);
