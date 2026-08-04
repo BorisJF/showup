@@ -194,27 +194,28 @@
     .ways-chips {
       display: flex;
       flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 11px;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 14px;
     }
     .ways-card.open .ways-chips { display: none; }
 
     .ways-chip {
       display: inline-flex;
       align-items: center;
-      gap: 5px;
-      padding: 4px 10px;
+      gap: 7px;
+      padding: 9px 17px;
       border-radius: 999px;
       background: var(--amber-light);
       color: var(--text);
       font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
-      font-size: 10px;
+      font-size: 12px;
       font-weight: 600;
       letter-spacing: 0.08em;
       text-transform: uppercase;
       white-space: nowrap;
     }
-    .ways-chip-emoji { font-size: 12px; }
+    .ways-chip-emoji { font-size: 16px; }
 
     .ways-body { margin-top: 13px; }
 
@@ -1413,18 +1414,25 @@
       transition: transform 0.12s, box-shadow 0.12s;
     }
     html[data-theme="papier"] .focus-card:active { transform: scale(0.985); }
-    html[data-theme="papier"] .focus-card.selected {
-      box-shadow: 6px 6px 0 0 var(--pt-rose);
-    }
     html[data-theme="papier"] textarea {
       border-radius: 10px;
       border: 1px solid #161616;
     }
     html[data-theme="papier"] .letter-badge {
       border-radius: 8px;
-      background: linear-gradient(120deg, #e4c98d 0%, #e8978a 27%, #4d7a9c 63%, #2e8067 100%);
-      color: #ffffff;
+      background: var(--pt-indigo);
+      color: #161616;
+      font-family: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
+      font-weight: 900;
     }
+    html[data-theme="papier"] .fc-0 .letter-badge { background: var(--pt-indigo); }
+    html[data-theme="papier"] .fc-1 .letter-badge { background: var(--pt-rose); }
+    html[data-theme="papier"] .fc-2 .letter-badge { background: var(--pt-mint); }
+    html[data-theme="papier"] .fc-3 .letter-badge { background: var(--pt-plum); }
+    html[data-theme="papier"] .fc-0 { box-shadow: 6px 6px 0 0 var(--pt-indigo); }
+    html[data-theme="papier"] .fc-1 { box-shadow: 6px 6px 0 0 var(--pt-rose); }
+    html[data-theme="papier"] .fc-2 { box-shadow: 6px 6px 0 0 var(--pt-mint); }
+    html[data-theme="papier"] .fc-3 { box-shadow: 6px 6px 0 0 var(--pt-plum); }
     html[data-theme="papier"] .remember-rule { border-radius: 0; height: 3px; }
     html[data-theme="papier"] .streak-pill {
       border: 1px solid var(--text);
@@ -1479,29 +1487,29 @@
     /* Word cloud — clean white panel, grotesque words in the iridescent palette */
     html[data-theme="papier"] .wordcloud-bg {
       background: #ffffff;
-      border: 1.5px solid rgba(22, 22, 22, 0.16);
-      border-radius: 4px;
+      border: 1px solid rgba(22, 22, 22, 0.16);
+      border-radius: 10px;
     }
     html[data-theme="papier"] .cloud-word {
       font-family: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
       font-weight: 700;
-      border-radius: 4px;
-      border: 2px solid #161616;
+      border-radius: 999px;
+      border: 1.5px solid #161616;
       box-shadow: 3px 3px 0 0 #161616;
-      padding: 4px 11px;
-      color: #fff;
+      padding: 6px 16px;
+      color: #161616;
     }
     html[data-theme="papier"] .cloud-word:hover {
       transform: translate(-1px, -1px);
       box-shadow: 5px 5px 0 0 #161616;
     }
     html[data-theme="papier"] .cloud-empty { font-family: 'Archivo', 'Helvetica Neue', Arial, sans-serif; font-style: normal; color: var(--muted); }
-    html[data-theme="papier"] .cw-0 { background: #161616; color: #fff; }
-    html[data-theme="papier"] .cw-1 { background: #5d5fa0; color: #fff; }
-    html[data-theme="papier"] .cw-2 { background: #b15a78; color: #fff; }
-    html[data-theme="papier"] .cw-3 { background: #ffffff; color: #161616; }
-    html[data-theme="papier"] .cw-4 { background: #3f8f74; color: #fff; }
-    html[data-theme="papier"] .cw-5 { background: #8f5668; color: #fff; }
+    html[data-theme="papier"] .cw-0 { background: #161616;         color: #ffffff; }
+    html[data-theme="papier"] .cw-1 { background: var(--pt-indigo); color: #161616; }
+    html[data-theme="papier"] .cw-2 { background: var(--pt-rose);   color: #161616; }
+    html[data-theme="papier"] .cw-3 { background: #ffffff;          color: #161616; }
+    html[data-theme="papier"] .cw-4 { background: var(--pt-mint);   color: #161616; }
+    html[data-theme="papier"] .cw-5 { background: var(--pt-plum);   color: #161616; }
 
     /* ── DISCREET STYLE TOGGLE (bottom centre, both themes) ── */
     #style-toggle {
@@ -2044,7 +2052,7 @@
       selectedFocus = null;
 
       const cards = PRIN().map((p, i) => `
-        <div class="focus-card" data-idx="${i}" onclick="selectCard(this)">
+        <div class="focus-card fc-${i % 4}" data-idx="${i}" onclick="selectCard(this)">
           <div class="letter-badge">${p.letter}</div>
           <div class="card-name">${esc(p.name)}</div>
           <div class="radio-circle"></div>
@@ -2074,7 +2082,7 @@
           <span class="section-label">${esc(t('todayShowingUp'))}</span>
           <div class="section-line"></div>
         </div>
-        <div class="focus-card selected" style="cursor:default">
+        <div class="focus-card selected fc-${+card.dataset.idx % 4}" style="cursor:default">
           <div class="letter-badge">${p.letter}</div>
           <div class="card-name">${esc(p.name)}</div>
           <div class="radio-circle"></div>
