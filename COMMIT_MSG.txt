@@ -1,0 +1,12 @@
+Paint the standing cards before the network call (sw v26)
+
+The "three ways to respond" and "body & mind" cards get their copy from
+applyStaticLabels(), which only ran inside renderFromData() — i.e. only
+on a successful /api/load. When the load failed, both cards rendered as
+empty shells: no chips, no reminder line, no habit state.
+
+Their content is entirely local (copy from I18N, habit state from
+localStorage), so there was never a reason to gate it on the network.
+Paint both at the top of loadApp() instead. Habits initialise as
+uncommitted in that case, so toggles persist locally and reconcile on the
+next successful load.

@@ -2383,6 +2383,12 @@
     async function loadApp() {
       const date = getTodayDate();
 
+      // Both standing cards are entirely local — copy from I18N, habit state
+      // from localStorage. Paint them before any network call so they survive
+      // a failed / slow /api/load instead of rendering empty.
+      applyStaticLabels();
+      initHabits(date, null);
+
       // ── Sync pending offline draft ───────────────────────────────────────
       const pendingDraft = localStorage.getItem('showup-draft');
       if (pendingDraft && navigator.onLine) {
