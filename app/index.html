@@ -1338,7 +1338,8 @@
     html[data-theme="papier"] .ways-chip   { color: #ffffff; letter-spacing: 0.10em; }
     html[data-theme="papier"] .ways-chip-0 { background: var(--pt-indigo); }
     html[data-theme="papier"] .ways-chip-1 { background: var(--pt-rose); }
-    html[data-theme="papier"] .ways-chip-2 { background: var(--pt-plum); }
+    html[data-theme="papier"] .ways-chip-2 { background: var(--pt-mint); }
+    html[data-theme="papier"] .ways-chip-3 { background: var(--pt-plum); }
 
     /* No lines — whitespace separates the three items instead. */
     html[data-theme="papier"] .ways-item { border-top: none; padding: 7px 0; }
@@ -1619,7 +1620,7 @@
   <!-- THREE WAYS TO RESPOND — collapsed by default, state remembered -->
   <div class="ways-card" id="ways-card">
     <button class="ways-toggle" id="ways-toggle" onclick="toggleWays()" aria-expanded="false" aria-controls="ways-body">
-      <span class="ways-eyebrow" id="ways-eyebrow">Three ways to respond</span>
+      <span class="ways-eyebrow" id="ways-eyebrow">Four ways to respond</span>
       <span class="ways-chevron" aria-hidden="true">▾</span>
     </button>
     <div class="ways-chips" id="ways-chips"></div>
@@ -1671,7 +1672,7 @@
 
   <!-- STYLE TOGGLE — sits at the foot of the page (not sticky) -->
   <button id="style-toggle" type="button" aria-label="Switch visual style" onclick="toggleStyle()">
-    <span class="st-dot"></span><span id="style-toggle-label">Papier Tigre</span>
+    <span class="st-dot"></span><span id="style-toggle-label">Original</span>
   </button>
 
 
@@ -1691,11 +1692,12 @@
         greetAfternoon: 'Good afternoon, Boris.',
         greetEvening: 'Good evening, Boris.',
         rememberLabel: 'Remember this',
-        waysLabel: 'Three ways to respond',
-        waysIntro: 'However hurtful the situation or the feeling, there are always three ways to respond.',
+        waysLabel: 'Four ways to respond',
+        waysIntro: 'However hurtful the situation or the feeling, there are always four ways to respond.',
         ways: [
           { emoji: '\u{1F9D8}', name: 'Acceptance',  def: 'Just make peace with the fact that this is reality and move on to more important things.' },
-          { emoji: '\u{1F476}', name: 'Retaliation', def: 'Strongly express your opinion, seeking to create maximum impact (and reaction).' },
+          { emoji: '\u{1F476}', name: 'Frustration', def: 'Stay annoyed, but keep it to yourself.' },
+          { emoji: '\u{1F4A3}', name: 'Retaliation', def: 'Strongly express your opinion, seeking to create maximum impact (and reaction).' },
           { emoji: '\u{1F4BC}', name: 'Diplomacy',   def: 'Find a way to make your voice heard that is both caring and productive.' },
         ],
         habitLabel: 'Body & mind',
@@ -1775,11 +1777,12 @@
         greetAfternoon: 'Bon après-midi, Boris.',
         greetEvening: 'Bonsoir, Boris.',
         rememberLabel: 'À retenir',
-        waysLabel: 'Trois façons de réagir',
-        waysIntro: 'Aussi blessante que soit la situation ou l\u2019émotion, il y a toujours trois façons de réagir.',
+        waysLabel: 'Quatre façons de réagir',
+        waysIntro: 'Aussi blessante que soit la situation ou l\u2019émotion, il y a toujours quatre façons de réagir.',
         ways: [
           { emoji: '\u{1F9D8}', name: 'Acceptation', def: 'Faire la paix avec le fait que c\u2019est la réalité, et passer à des choses plus importantes.' },
-          { emoji: '\u{1F476}', name: 'Riposte',     def: 'Exprimer fermement son opinion, en cherchant l\u2019impact (et la réaction) maximal.' },
+          { emoji: '\u{1F476}', name: 'Frustration', def: 'Rester agacé, mais garder ça pour soi.' },
+          { emoji: '\u{1F4A3}', name: 'Riposte',     def: 'Exprimer fermement son opinion, en cherchant l\u2019impact (et la réaction) maximal.' },
           { emoji: '\u{1F4BC}', name: 'Diplomatie',  def: 'Trouver une façon de se faire entendre qui soit à la fois bienveillante et productive.' },
         ],
         habitLabel: 'Corps & esprit',
