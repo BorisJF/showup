@@ -184,12 +184,23 @@
       color: var(--amber);
     }
 
-    .ways-chevron {
-      font-size: 12px;
-      color: var(--muted);
-      transition: transform 0.18s ease;
+    .ways-pm {
+      width: 34px;
+      height: 34px;
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1.5px solid var(--card-border);
+      border-radius: 9px;
+      background: var(--card);
+      color: var(--amber);
+      font-size: 19px;
+      font-weight: 700;
+      line-height: 1;
+      transition: transform 0.1s, box-shadow 0.1s;
     }
-    .ways-card.open .ways-chevron { transform: rotate(180deg); }
+    .ways-toggle:active .ways-pm { transform: scale(0.94); }
 
     .ways-chips {
       display: flex;
@@ -1329,6 +1340,21 @@
       letter-spacing: 0.16em;
     }
     html[data-theme="papier"] .ways-eyebrow  { color: var(--pt-plum); }
+    html[data-theme="papier"] .ways-pm {
+      background: #ffffff;
+      color: #161616;
+      border: 2px solid #161616;
+      border-radius: 9px;
+      box-shadow: 3px 3px 0 0 var(--pt-plum);
+      font-family: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
+      font-weight: 900;
+    }
+    html[data-theme="papier"] .ways-toggle:hover .ways-pm {
+      transform: translate(-1px, -1px); box-shadow: 4px 4px 0 0 var(--pt-plum);
+    }
+    html[data-theme="papier"] .ways-toggle:active .ways-pm {
+      transform: translate(2px, 2px); box-shadow: 1px 1px 0 0 var(--pt-plum);
+    }
     html[data-theme="papier"] .habit-eyebrow { color: var(--pt-mint); }
     html[data-theme="papier"] .ways-item-name {
       font-weight: 800; letter-spacing: 0.12em; color: #161616;
@@ -1621,7 +1647,7 @@
   <div class="ways-card" id="ways-card">
     <button class="ways-toggle" id="ways-toggle" onclick="toggleWays()" aria-expanded="false" aria-controls="ways-body">
       <span class="ways-eyebrow" id="ways-eyebrow">Four ways to respond</span>
-      <span class="ways-chevron" aria-hidden="true">▾</span>
+      <span class="ways-pm" id="ways-pm" aria-hidden="true">+</span>
     </button>
     <div class="ways-chips" id="ways-chips"></div>
     <div class="ways-body" id="ways-body" hidden></div>
@@ -1976,6 +2002,8 @@
       body.hidden = !open;
       card.classList.toggle('open', open);
       toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      const pm = document.getElementById('ways-pm');
+      if (pm) pm.textContent = open ? '\u2013' : '+';
     }
 
     function toggleWays() {
